@@ -1,0 +1,33 @@
+# React Native directories and files
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Expo directories
+.expo/
+.eps/
+expo-cli/
+*.json5
+*.xml
+*.lock
+
+# React Native Metro bundler cache
+/.metro/
+node_modules/
+yarn.lock
+
+# Build directories
+build/
+dist/
+output/
+public/
+android/app/build/
+ios/build/
+ios/Pods/
+node_modules/
+.idea/
+.vscode/
+
+# Fast refresh cache
+.cache/
