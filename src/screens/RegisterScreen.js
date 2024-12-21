@@ -47,9 +47,9 @@ export default function RegisterScreen({ navigation }) {
       // Navigate to the Dashboard on success
       navigation.reset({
         index: 0,
-        routes: [{ name: 'Dashboard' }],
+        routes: [{ name: 'QuestionnaireScreen' }],
       });
-      
+            
     } catch (error) {
       console.error('Error during sign up:', error.message);
       alert('Error: ' + error.message);
