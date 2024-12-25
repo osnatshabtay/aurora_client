@@ -47,7 +47,7 @@ export default function RegisterScreen({ navigation }) {
       // Navigate to the Dashboard on success
       navigation.reset({
         index: 0,
-        routes: [{ name: 'QuestionnaireScreen' }],
+        routes: [{ name: 'QuestionsScreen' }],
       });
             
     } catch (error) {
