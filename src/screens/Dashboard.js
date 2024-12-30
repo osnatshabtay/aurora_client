@@ -25,6 +25,13 @@ export default function Dashboard({ navigation }) {
       >
         Logout
       </Button>
+        <Button
+          mode="outlined"
+          onPress={() => navigation.navigate('FeedScreen')}
+        >
+          פיד
+        </Button>
+      
     </Background>
   )
 }
