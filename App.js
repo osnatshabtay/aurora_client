@@ -9,6 +9,7 @@ import {
   RegisterScreen,
   ResetPasswordScreen,
   Dashboard,
+  EnrichmentContent,
 } from './src/screens'
 
 const Stack = createStackNavigator()
@@ -30,6 +31,10 @@ export default function App() {
           <Stack.Screen
             name="ResetPasswordScreen"
             component={ResetPasswordScreen}
+          />
+          <Stack.Screen 
+            name="EnrichmentContent" 
+            component={EnrichmentContent} 
           />
         </Stack.Navigator>
       </NavigationContainer>

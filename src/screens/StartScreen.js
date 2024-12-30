@@ -33,6 +33,14 @@ export default function StartScreen({ navigation }) {
         שאלון
       </Button>
 
+      <Button
+        mode="outlined"
+        onPress={() => navigation.navigate('EnrichmentContent')}
+      >
+        תכני העשרה
+      </Button>
+
+
     </Background>
   )
 }
