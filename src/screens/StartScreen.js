@@ -25,14 +25,7 @@ export default function StartScreen({ navigation }) {
       >
         הרשמה
       </Button>
-
-      <Button
-        mode="outlined"
-        onPress={() => navigation.navigate('QuestionsScreen')}
-      >
-        שאלון
-      </Button>
-
+      
     </Background>
   )
 }
