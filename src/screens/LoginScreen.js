@@ -34,7 +34,8 @@ export default function LoginScreen({ navigation }) {
         },
         body: JSON.stringify({
           username: name.value,
-          password: password.value,
+          password: password.value, 
+          agreement: true,
         }),
       });
   

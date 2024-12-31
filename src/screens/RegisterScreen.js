@@ -70,7 +70,7 @@ export default function RegisterScreen({ navigation, route}) {
             
     } catch (error) {
       console.error('Error during sign up:', error.message);
-      alert('Error: ' + error.message);
+      alert(error.message);
     }
   };
   
