@@ -10,6 +10,7 @@ import {
   ResetPasswordScreen,
   Dashboard,
   EnrichmentContent,
+  CategoryContent,
 } from './src/screens'
 
 const Stack = createStackNavigator()
@@ -28,14 +29,9 @@ export default function App() {
           <Stack.Screen name="LoginScreen" component={LoginScreen} />
           <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
           <Stack.Screen name="Dashboard" component={Dashboard} />
-          <Stack.Screen
-            name="ResetPasswordScreen"
-            component={ResetPasswordScreen}
-          />
-          <Stack.Screen 
-            name="EnrichmentContent" 
-            component={EnrichmentContent} 
-          />
+          <Stack.Screen name="ResetPasswordScreen" component={ResetPasswordScreen}/>
+          <Stack.Screen name="EnrichmentContent" component={EnrichmentContent}/>
+          <Stack.Screen name="CategoryContent" component={CategoryContent} options={{ title: 'תוכן הקטגוריה' }} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>
