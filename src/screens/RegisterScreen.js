@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import Checkbox from 'expo-checkbox';
+import React, { useState , useEffect } from 'react'
 import { View, StyleSheet, TouchableOpacity } from 'react-native'
 import { Text } from 'react-native-paper'
 import Background from '../components/Background'
@@ -11,9 +12,20 @@ import { theme } from '../core/theme'
 import { passwordValidator } from '../helpers/passwordValidator'
 import { nameValidator } from '../helpers/nameValidator'
 
-export default function RegisterScreen({ navigation }) {
+
+export default function RegisterScreen({ navigation, route}) {
   const [name, setName] = useState({ value: '', error: '' })
   const [password, setPassword] = useState({ value: '', error: '' })
+  const [isChecked, setChecked] = useState(false);
+
+  const { params } = route || {};
+
+  // Use useEffect to check for the navigation parameter
+  useEffect(() => {
+    if (route.params?.acceptedTerms) {
+      setChecked(true); // Automatically check the box
+    }
+  }, [route.params]);
 
   const onSignUpPressed = async () => {
     const nameError = nameValidator(name.value);
@@ -21,6 +33,11 @@ export default function RegisterScreen({ navigation }) {
     if (passwordError || nameError) {
       setName({ ...name, error: nameError });
       setPassword({ ...password, error: passwordError });
+      return;
+    }
+
+    if (!isChecked) {
+      alert('עליך להסכים לתנאים ולהגבלות כדי להירשם');
       return;
     }
   
@@ -33,6 +50,7 @@ export default function RegisterScreen({ navigation }) {
         body: JSON.stringify({
           username: name.value,
           password: password.value,
+          agreement: isChecked,
         }),
       });
   
@@ -78,13 +96,27 @@ export default function RegisterScreen({ navigation }) {
         errorText={password.error}
         secureTextEntry
       />
+      <View style={styles.checkboxRow}>
+        <Checkbox
+          value={isChecked}
+          onValueChange={setChecked}
+          color={isChecked ? theme.colors.primary : undefined}
+        />
+        <Text style={styles.checkboxText}>אני מסכים לתנאים ולהגבלות</Text>
+      </View>
       <Button
         mode="contained"
         onPress={onSignUpPressed}
         style={{ marginTop: 24 }}
+        disabled={!isChecked}
       >
         המשך
       </Button>
+      <View style={styles.row}>
+      <TouchableOpacity onPress={() => navigation.navigate('RegulationsScreen')}>
+        <Text style={styles.link}>תקנון משתמשים </Text>
+      </TouchableOpacity>
+      </View>
       <View style={styles.row}>
       <TouchableOpacity onPress={() => navigation.replace('LoginScreen')}>
           <Text style={styles.link}>התחבר</Text>
@@ -103,5 +135,13 @@ const styles = StyleSheet.create({
   link: {
     fontWeight: 'bold',
     color: theme.colors.primary,
+  },
+  checkboxRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 16,
+  },
+  checkboxText: {
+    fontSize: 16,
   },
 })
