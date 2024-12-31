@@ -8,7 +8,7 @@ import {
   LoginScreen,
   RegisterScreen,
   Dashboard,
-  QuestionsScreen
+  QuestionsScreen,
   RegulationsScreen,
 } from './src/screens'
 
