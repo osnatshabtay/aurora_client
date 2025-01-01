@@ -4,5 +4,4 @@ export { default as RegisterScreen } from './RegisterScreen'
 export { default as Dashboard } from './Dashboard'
 export { default as QuestionsScreen } from './QuestionsScreen'
 export { default as RegulationsScreen } from './RegulationsScreen'
-
-
+export { default as EnrichmentContent } from './EnrichmentContent'
