@@ -28,9 +28,9 @@ export default function StartScreen({ navigation }) {
 
       <Button
         mode="outlined"
-        onPress={() => navigation.navigate('QuestionsScreen')}
+        onPress={() => navigation.navigate('FeedPage')}
       >
-        שאלון
+        פיד
       </Button>
 
     </Background>

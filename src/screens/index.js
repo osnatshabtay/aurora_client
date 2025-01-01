@@ -5,5 +5,5 @@ export { default as ResetPasswordScreen } from './ResetPasswordScreen'
 export { default as Dashboard } from './Dashboard'
 export { default as QuestionsScreen } from './QuestionsScreen'
 export { default as FeedScreen } from './FeedScreen'
-
+export { default as FeedPage } from './FeedPage'
 
