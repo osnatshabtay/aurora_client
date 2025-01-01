@@ -11,6 +11,8 @@ import {
   QuestionsScreen,
   RegulationsScreen,
   EnrichmentContent,
+  HomeScreen,
+  CategoryContent,
 } from './src/screens'
 
 const Stack = createStackNavigator()
@@ -32,10 +34,10 @@ export default function App() {
           <Stack.Screen name="Dashboard" component={Dashboard} />
           <Stack.Screen name="QuestionsScreen" component={QuestionsScreen} />
           <Stack.Screen name="EnrichmentContent" component={EnrichmentContent}/>
+          <Stack.Screen name="HomeScreen" component={HomeScreen}/>
+          <Stack.Screen name="CategoryContent" component={CategoryContent}/>
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>
   )
 }
-
-

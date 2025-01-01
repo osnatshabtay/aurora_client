@@ -33,6 +33,13 @@ export default function StartScreen({ navigation }) {
         תכני העשרה
       </Button>
 
+      <Button
+        mode="outlined"
+        onPress={() => navigation.navigate('HomeScreen')}
+      >
+דף בית
+      </Button>
+
     </Background>
   )
 }
