@@ -47,10 +47,9 @@ export default function LoginScreen({ navigation }) {
       const result = await response.json();
       console.log('Server response:', result);
   
-      // Navigate to the Dashboard on success
       navigation.reset({
         index: 0,
-        routes: [{ name: 'Dashboard' }],
+        routes: [{ name: 'HomeScreen' }],
       });
       
     } catch (error) {
