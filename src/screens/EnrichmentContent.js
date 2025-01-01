@@ -9,7 +9,7 @@ const categories = [
     titleHe: 'תרגול נשימה והרפיה',
     titleEn: 'תרגולים שיעזרו לך להירגע ולשחרר מתח נפשי',
     image: require('../assets/1.jpeg'),
-    color: ['#E1F5FE', '#BBDEFB'],
+    color: ['#FFF5F5'],
     content: [
       { type: 'text', value: 'בואו ללמוד כיצד לבצע תרגול נשימה פשוט שמסייע בהרפיה של הגוף והנפש' },
       { type: 'video', value: 'https://www.youtube.com/embed/bnCuQRO5xjE' },
@@ -22,7 +22,7 @@ const categories = [
     titleHe: 'העצמה אישית והתמודדות עם פחדים',
     titleEn: 'כלים להתמודדות עם פחדים, חרדות והעצמת הביטחון העצמי',
     image: require('../assets/2.jpeg'),
-    color: ['#e2d5f5'],
+    color: ['#F7FAFC'],
     content: [
       { type: 'text', value: 'תרגיל "דמיון מודרך" להתמודדות עם פחדים' },
       { type: 'video', value: 'https://www.youtube.com/embed/SYrpH4CnfKQ' },
@@ -33,7 +33,7 @@ const categories = [
     titleHe: 'התמודדות עם טראומה ודיכאון',
     titleEn: 'כלים וטכניקות להתמודדות עם טראומה ודיכאון, להקל על ההתמודדות היומיומית',
     image: require('../assets/3.jpeg'),
-    color: ['#E1F5FE', '#BBDEFB'],
+    color: ['#f1e9f5'],
     content: [
       { type: 'text', value: 'תרגילי יוגה לעידוד תחושת רוגע' },
       { type: 'video', value: 'https://www.youtube.com/embed/8TuRYV71Rgo' },
@@ -44,7 +44,7 @@ const categories = [
     titleHe: 'מדיטציה ומיינדפולנס',
     titleEn: 'תרגולי מדיטציה ומיינדפולנס לשיפור הרוגע הפנימי',
     image: require('../assets/4.jpeg'),
-    color: ['#e2d5f5'],
+    color: ['#FFF5F5'],
     content: [
       { type: 'text', value: 'מדיטציית מיינדפולנס של 5 דקות - לרגיעה ושלווה מיידיים' },
       { type: 'video', value: 'https://www.youtube.com/embed/TENB02x_cig' },
@@ -105,7 +105,7 @@ export default function EnrichmentContent({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F4F7FC',  // Lighter background that fits with the app theme
+    backgroundColor: '#FAF9F6',  
     paddingVertical: 16,
     paddingHorizontal: 12,
     direction: 'rtl', 
