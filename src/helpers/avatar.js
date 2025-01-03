@@ -1,4 +1,3 @@
-// src/utils/imageMapping.js
 export const imageMapping = {
     "boy_avatar1.png": require("../assets/avatar/boy_avatar1.png"),
     "boy_avatar2.png": require("../assets/avatar/boy_avatar2.png"),

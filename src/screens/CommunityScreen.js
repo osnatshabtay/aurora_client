@@ -12,13 +12,14 @@ import {
 } from 'react-native';
 import { Card, CardHeader, CardContent, CardFooter } from '../components/Card';
 import { Heart, MessageCircle } from '../components/Icon';
-
+import { imageMapping } from '../helpers/avatar';
 
 const Avatar = ({ size = 40, uri }) => {
+  const imageSource = imageMapping[uri] || require('../assets/logo.png');
   return (
     <View style={[styles.avatarContainer, { width: size, height: size, borderRadius: size / 2 }]}>
       <Image
-        source={uri ? { uri } : require('../assets/logo.png')}
+        source={imageSource}
         style={{ width: size, height: size, borderRadius: size / 2 }}
       />
     </View>
@@ -29,7 +30,10 @@ export default function CommunityScreen() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [newPostText, setNewPostText] = useState('');
-  const [username, setUsername] = useState('JohnDoe'); 
+  const [currentUser, setCurrentUser] = useState({
+    username: 'anonymous',
+    selectedImage: 'boy_avatar1.png',
+  });
 
   useEffect(() => {
     fetchPosts();
@@ -40,7 +44,10 @@ export default function CommunityScreen() {
       const response = await fetch('http://127.0.0.1:8000/feed/all_posts');
       const data = await response.json();
       setPosts(data.posts);
-
+      setCurrentUser({
+        username: data.current_username,
+        selectedImage: data.current_username_image,
+      });
     } catch (error) {
       console.error('Error fetching posts:', error);
       Alert.alert('Error', 'Failed to fetch posts.');
@@ -62,16 +69,17 @@ export default function CommunityScreen() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          username: 'Osnat',
-          text: newPostText,
-          likes: [],
-          commands: [],
-          approved: false,
+          text: newPostText.trim(),
         }),
       });
-      Alert.alert('Success', 'Post created successfully.');
-      fetchPosts(); // Refresh posts after creating a new one
-      setNewPostText('');
+
+      if (response.ok) {
+        Alert.alert('Success', 'Post created successfully.');
+        fetchPosts(); // Refresh posts after creating a new one
+        setNewPostText('');
+      } else {
+        Alert.alert('Error', 'Failed to create post.');
+      }
     } catch (error) {
       console.error('Error creating post:', error);
       Alert.alert('Error', 'Failed to create post.');
@@ -85,7 +93,7 @@ export default function CommunityScreen() {
   const handleComment = (postId) => {
     console.log(`Opening comments for post with ID: ${postId}`);
   };
-  
+
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollArea}>
@@ -93,7 +101,7 @@ export default function CommunityScreen() {
           {/* Post Creation */}
           <Card>
             <CardHeader style={[styles.cardHeader, styles.postCreationHeader]}>
-              <Avatar size={50} />
+              <Avatar size={50} uri={currentUser.selectedImage} />
               <TextInput
                 placeholder="What's New?"
                 style={styles.input}
@@ -116,8 +124,8 @@ export default function CommunityScreen() {
               <Card key={index}>
                 <CardHeader style={styles.cardHeader}>
                   <View style={styles.userContainer}>
-                    <Avatar size={40} />
-                    <Text style={styles.userName}>{post.username}</Text>
+                    <Avatar size={40} uri={post.user_image} />
+                    <Text style={styles.userName}>{post.user}</Text>
                   </View>
                 </CardHeader>
                 <CardContent style={styles.cardContent}>
@@ -225,4 +233,9 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     backgroundColor: '#ddd',
   },
+  avatarContainer: {
+    overflow: 'hidden',
+    backgroundColor: '#ddd',
+  },
+
 });
