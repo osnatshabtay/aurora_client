@@ -25,7 +25,12 @@ export default function StartScreen({ navigation }) {
       >
         הרשמה
       </Button>
-
+      <Button
+        mode="outlined"
+        onPress={() => navigation.navigate('CommunityScreen')}
+      >
+        feed
+      </Button>
     </Background>
   )
 }

@@ -1,22 +1,30 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Alert, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Alert, ScrollView, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Background from '../components/Background';
 import Logo from '../components/Logo';
 import Header from '../components/Header';
-import { theme } from '../core/theme'; 
+import { theme } from '../core/theme';
+import {imageMapping} from '../helpers/avatar';
+
 
 const QuestionnaireScreen = () => {
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState({});
   const [showTraumaQuestions, setShowTraumaQuestions] = useState(false);
+  const [imageSelect, setImageSelect] = useState(null);
+
   const navigation = useNavigation();
+  
 
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
         const response = await fetch('http://127.0.0.1:8000/users/questions');
+        if (!response.ok) {
+          throw new Error('Failed to fetch questions');
+        }
         const data = await response.json();
         setQuestions(data.questions);
       } catch (error) {
@@ -30,15 +38,34 @@ const QuestionnaireScreen = () => {
 
   const handleAnswerSelect = (option) => {
     const currentQuestion = questions[currentQuestionIndex];
-    const isTraumaQuestion =
-      currentQuestion.question === "האם חווית אירוע טראומטי?";
+    const isGenderQuestion = currentQuestion.question === "איך תרצה שנפנה אלייך? ";
+    const isTraumaQuestion = currentQuestion.question === "האם חווית אירוע טראומטי?";
+    const isImage = option.endsWith('.png');
 
-    if (isTraumaQuestion && option === "כן") {
-      setShowTraumaQuestions(true);
-    } else if (isTraumaQuestion && option === "לא") {
-      setShowTraumaQuestions(false);
+    // Save the selected image to state
+    if (isImage) {
+      setImageSelect(option);
+    }
+  
+
+    if (isGenderQuestion) {
+      if (option === "זכר") {
+        setQuestions((prevQuestions) =>
+          prevQuestions.filter((q) => q.question !== "תבחרי עבורך תמונה :)")
+        );
+      } else if (option === "נקבה") {
+        setQuestions((prevQuestions) =>
+          prevQuestions.filter((q) => q.question !== "תבחר עבורך תמונה :)")
+        );
+      }
     }
 
+    // Handle trauma-specific questions
+    if (isTraumaQuestion) {
+      setShowTraumaQuestions(option === "כן");
+    }
+
+    // Update answers
     if (currentQuestion.multiple) {
       const currentAnswers = answers[currentQuestionIndex] || [];
       if (currentAnswers.includes(option)) {
@@ -69,48 +96,72 @@ const QuestionnaireScreen = () => {
 
   const filteredQuestions = getFilteredQuestions();
 
+  const renderOption = (option) => {
+    const isImage = option.endsWith('.png');
+    if (isImage && imageMapping[option]) {
+      return (
+        <Image
+          source={imageMapping[option]}
+          style={styles.optionImage}
+        />
+      );
+    }
+  
+    return (
+      <Text
+        style={[
+          styles.optionText,
+          answers[currentQuestionIndex]?.includes(option) && styles.selectedOptionText,
+        ]}
+      >
+        {option}
+      </Text>
+    );
+  };
+    
   const handleNextQuestion = async () => {
     if (currentQuestionIndex < filteredQuestions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
-
-    } else {
+    } 
+    else {
+      const genderAnswer = answers[questions.findIndex(q => q.question === "איך תרצה שנפנה אלייך? ")];
+  
       const formattedAnswers = filteredQuestions.map((question, index) => ({
         question: question.question,
         answers: answers[index],
       }));
-
+  
+      const payload = {
+        answers: formattedAnswers,
+        gender: genderAnswer,
+        selectedImage: imageSelect,
+        };
+  
       try {
         const response = await fetch('http://127.0.0.1:8000/users/questions', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ 
-            answers: formattedAnswers
-          }),
+          body: JSON.stringify(payload), // Send the updated payload
         });
-
+  
         if (!response.ok) {
           const errorMessage = await response.text();
           throw new Error(errorMessage || 'Failed to save answers.');
         }
-
-        const result = await response.json();
   
         Alert.alert('Success', 'Answers saved successfully!');
-
         navigation.reset({
           index: 0,
           routes: [{ name: 'HomeScreen' }],
         });
-        
       } catch (error) {
         console.error('Error saving answers:', error.message);
         Alert.alert('Error', 'Failed to save answers.');
       }
     }
   };
-  
 
   const handlePreviousQuestion = () => {
     if (currentQuestionIndex > 0) {
@@ -160,14 +211,7 @@ const QuestionnaireScreen = () => {
               ]}
               onPress={() => handleAnswerSelect(option)}
             >
-              <Text
-                style={[
-                  styles.optionText,
-                  answers[currentQuestionIndex]?.includes(option) && styles.selectedOptionText,
-                ]}
-              >
-                {option}
-              </Text>
+              {renderOption(option)}
             </TouchableOpacity>
           ))}
         </View>
@@ -197,9 +241,6 @@ const QuestionnaireScreen = () => {
             >
               {currentQuestionIndex < filteredQuestions.length - 1 ? 'הבא' : 'סיים'}
             </Text>
-            <Text> 
-
-            </Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -214,35 +255,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     paddingVertical: 10,
   },
-
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 16,
-  },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
   questionContainer: {
-    marginVertical: 20, 
+    marginVertical: 20,
     alignItems: 'center',
-  },
-
-  _question: {
-    fontSize: 20,
-    marginBottom: 20,
-    textAlign: 'center',
-    fontWeight: 'bold',
-  },
-  
-  get question() {
-    return this._question;
-  },
-  set question(value) {
-    this._question = value;
   },
   infoText: {
     fontSize: 14,
@@ -255,7 +275,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 30,
   },
-
   optionButton: {
     backgroundColor: '#fff',
     borderWidth: 2,
@@ -284,6 +303,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
+  optionImage: {
+    width: 100,
+    height: 100,
+    resizeMode: 'contain',
+  },
   buttonsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -302,4 +326,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default QuestionnaireScreen;
+export default QuestionnaireScreen; 

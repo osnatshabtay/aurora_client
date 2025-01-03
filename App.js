@@ -13,6 +13,7 @@ import {
   EnrichmentContent,
   HomeScreen,
   CategoryContent,
+  CommunityScreen,
 } from './src/screens'
 
 const Stack = createStackNavigator()
@@ -36,6 +37,8 @@ export default function App() {
           <Stack.Screen name="EnrichmentContent" component={EnrichmentContent}/>
           <Stack.Screen name="HomeScreen" component={HomeScreen}/>
           <Stack.Screen name="CategoryContent" component={CategoryContent}/>
+          <Stack.Screen name="CommunityScreen" component={CommunityScreen}/>
+
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>
