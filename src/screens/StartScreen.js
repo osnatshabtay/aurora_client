@@ -24,6 +24,27 @@ export default function StartScreen({ navigation }) {
       >
         הרשמה
       </Button>
+
+      <Button
+        mode="outlined"
+        onPress={() => navigation.navigate('EnrichmentContent')}
+      >
+        תכני העשרה
+      </Button>
+
+      <Button
+        mode="outlined"
+        onPress={() => navigation.navigate('HomeScreenManager')}
+      >
+דף בית מנהל      </Button>
+
+      <Button
+        mode="outlined"
+        onPress={() => navigation.navigate('HomeScreen')}
+      >
+דף בית
+      </Button>
+
     </Background>
   )
 }
