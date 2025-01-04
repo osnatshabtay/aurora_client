@@ -11,7 +11,6 @@ export default function StartScreen({ navigation }) {
       <Logo />
       <Header>ברוכים הבאים</Header>
       <Paragraph>
-        לכתוב משהווו מרגש
       </Paragraph>
       <Button
         mode="contained"
@@ -24,12 +23,6 @@ export default function StartScreen({ navigation }) {
         onPress={() => navigation.navigate('RegisterScreen')}
       >
         הרשמה
-      </Button>
-      <Button
-        mode="outlined"
-        onPress={() => navigation.navigate('CommunityScreen')}
-      >
-        feed
       </Button>
     </Background>
   )

@@ -102,7 +102,7 @@ export default function RegisterScreen({ navigation, route}) {
           onValueChange={setChecked}
           color={isChecked ? theme.colors.primary : undefined}
         />
-        <Text style={styles.checkboxText}>אני מסכים לתנאים ולהגבלות</Text>
+        <Text style={styles.checkboxText}> אני מסכים לתנאים ולהגבלות </Text>
       </View>
       <Button
         mode="contained"
@@ -119,7 +119,7 @@ export default function RegisterScreen({ navigation, route}) {
       </View>
       <View style={styles.row}>
       <TouchableOpacity onPress={() => navigation.replace('LoginScreen')}>
-          <Text style={styles.link}>התחבר</Text>
+          <Text style={styles.link}> התחבר </Text>
         </TouchableOpacity>
         <Text>יש לך כבר חשבון ?  </Text>
       </View>
@@ -143,5 +143,7 @@ const styles = StyleSheet.create({
   },
   checkboxText: {
     fontSize: 16,
+    alignSelf: 'flex-start', 
+    marginLeft: 8,          
   },
 })

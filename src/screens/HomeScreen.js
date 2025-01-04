@@ -56,7 +56,7 @@ export default function HomeScreen({ navigation }) {
       </TouchableOpacity>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.headerContainer}>
-          <Text style={styles.greeting}>שלום משתמש</Text>
+          <Text style={styles.greeting}>שלום לך</Text>
           <Text style={styles.subtitle}>במה נוכל לעזור לך היום?</Text>
         </View>
 
