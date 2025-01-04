@@ -35,6 +35,12 @@ export default function StartScreen({ navigation }) {
 
       <Button
         mode="outlined"
+        onPress={() => navigation.navigate('HomeScreenManager')}
+      >
+דף בית מנהל      </Button>
+
+      <Button
+        mode="outlined"
         onPress={() => navigation.navigate('HomeScreen')}
       >
 דף בית
