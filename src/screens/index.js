@@ -8,3 +8,5 @@ export { default as EnrichmentContent } from './EnrichmentContent'
 export { default as CategoryContent } from './CategoryContent'
 export { default as HomeScreen } from './HomeScreen'
 export { default as CommunityScreen } from './CommunityScreen'
+export { default as ChatBotScreen } from './ChatBotScreen'
+

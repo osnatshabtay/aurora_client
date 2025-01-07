@@ -14,6 +14,7 @@ import {
   HomeScreen,
   CategoryContent,
   CommunityScreen,
+  ChatBotScreen,
 } from './src/screens'
 
 const Stack = createStackNavigator()
@@ -38,6 +39,7 @@ export default function App() {
           <Stack.Screen name="HomeScreen" component={HomeScreen}/>
           <Stack.Screen name="CategoryContent" component={CategoryContent}/>
           <Stack.Screen name="CommunityScreen" component={CommunityScreen}/>
+          <Stack.Screen name="ChatBotScreen" component={ChatBotScreen} />
 
         </Stack.Navigator>
       </NavigationContainer>

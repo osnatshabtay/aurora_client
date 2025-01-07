@@ -13,6 +13,7 @@ import {
 import { Card, CardHeader, CardContent, CardFooter } from '../components/Card';
 import { Heart, MessageCircle } from '../components/Icon';
 import { imageMapping } from '../helpers/avatar';
+import { theme } from '../core/theme'; 
 
 const Avatar = ({ size = 40, uri }) => {
   const imageSource = imageMapping[uri] || require('../assets/logo.png');
@@ -187,7 +188,7 @@ const styles = StyleSheet.create({
   },
   addPostButton: {
     marginLeft: 8,
-    backgroundColor: '#560CCE',
+    backgroundColor: theme.colors.primary,
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 8,
