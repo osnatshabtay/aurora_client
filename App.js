@@ -14,6 +14,7 @@ import {
   HomeScreen,
   CategoryContent,
   CommunityScreen,
+  ChatBotScreen,
   HomeScreenManager,
 } from './src/screens'
 
@@ -39,6 +40,7 @@ export default function App() {
           <Stack.Screen name="HomeScreen" component={HomeScreen}/>
           <Stack.Screen name="CategoryContent" component={CategoryContent}/>
           <Stack.Screen name="CommunityScreen" component={CommunityScreen}/>
+          <Stack.Screen name="ChatBotScreen" component={ChatBotScreen} />
 
           <Stack.Screen name="HomeScreenManager" component={HomeScreenManager}/>
         </Stack.Navigator>

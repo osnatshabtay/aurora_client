@@ -1,4 +1,5 @@
 import React from 'react';
+import { theme } from '../core/theme'; 
 import { ScrollView, StyleSheet, View, I18nManager } from 'react-native';
 import { Text } from 'react-native-paper';
 import Background from '../components/Background';
@@ -86,18 +87,18 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginVertical: 10,
-    color: '#4A90E2',
+    color: theme.colors.primary,
     textAlign: 'right',
   },
   header: {
     fontSize: 20,
     fontWeight: 'bold',
     textAlign: 'center',
-    color: '#6A1B9A',
+    color: theme.colors.primary,
     marginBottom: 10,
   },
   button: {
     marginTop: 24,
-    backgroundColor: '#6A1B9A',
+    backgroundColor: theme.colors.primary,
   },
 });
