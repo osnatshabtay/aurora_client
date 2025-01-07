@@ -13,6 +13,8 @@ import {
 import { Card, CardHeader, CardContent, CardFooter } from '../components/Card';
 import { Heart, MessageCircle } from '../components/Icon';
 import { imageMapping } from '../helpers/avatar';
+import { URL } from '@env';
+
 
 const Avatar = ({ size = 40, uri }) => {
   const imageSource = imageMapping[uri] || require('../assets/logo.png');
@@ -41,7 +43,7 @@ export default function CommunityScreen() {
 
   const fetchPosts = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:8000/feed/all_posts');
+      const response = await fetch(`${URL}:8000/feed/all_posts`);
       const data = await response.json();
       setPosts(data.posts);
       setCurrentUser({
@@ -63,7 +65,7 @@ export default function CommunityScreen() {
     }
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/feed/write_post', {
+      const response = await fetch(`${URL}:8000/feed/write_post`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

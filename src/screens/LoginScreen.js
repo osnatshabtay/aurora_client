@@ -10,6 +10,7 @@ import BackButton from '../components/BackButton'
 import { theme } from '../core/theme'
 import { passwordValidator } from '../helpers/passwordValidator'
 import { nameValidator } from '../helpers/nameValidator'
+import { URL } from '@env';
 
 
 export default function LoginScreen({ navigation }) {
@@ -27,7 +28,7 @@ export default function LoginScreen({ navigation }) {
     }
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/users/login', {
+      const response = await fetch(`${URL}:8000/users/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

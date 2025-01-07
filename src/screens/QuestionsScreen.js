@@ -6,6 +6,8 @@ import Logo from '../components/Logo';
 import Header from '../components/Header';
 import { theme } from '../core/theme';
 import {imageMapping} from '../helpers/avatar';
+import { URL } from '@env';
+
 
 
 const QuestionnaireScreen = () => {
@@ -21,7 +23,7 @@ const QuestionnaireScreen = () => {
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        const response = await fetch('http://127.0.0.1:8000/users/questions');
+        const response = await fetch(`${URL}:8000/users/questions`);
         if (!response.ok) {
           throw new Error('Failed to fetch questions');
         }
@@ -138,7 +140,7 @@ const QuestionnaireScreen = () => {
         };
   
       try {
-        const response = await fetch('http://127.0.0.1:8000/users/questions', {
+        const response = await fetch(`${URL}:8000/users/questions`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

@@ -11,6 +11,7 @@ import BackButton from '../components/BackButton'
 import { theme } from '../core/theme'
 import { passwordValidator } from '../helpers/passwordValidator'
 import { nameValidator } from '../helpers/nameValidator'
+import { URL } from '@env';
 
 
 export default function RegisterScreen({ navigation, route}) {
@@ -42,7 +43,7 @@ export default function RegisterScreen({ navigation, route}) {
     }
   
     try {
-      const response = await fetch('http://127.0.0.1:8000/users/register', {
+      const response = await fetch(`${URL}:8000/users/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
