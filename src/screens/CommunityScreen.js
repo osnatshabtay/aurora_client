@@ -11,10 +11,9 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { Card, CardHeader, CardContent, CardFooter } from '../components/Card';
-import { Heart, MessageCircle, HeartOutline, HeartFilled} from '../components/Icon';
+import { MessageCircle, HeartOutline, HeartFilled } from '../components/Icon';
 import { imageMapping } from '../helpers/avatar';
 import { URL } from '@env';
-
 
 const Avatar = ({ size = 40, uri }) => {
   const imageSource = imageMapping[uri] || require('../assets/logo.png');
@@ -36,6 +35,9 @@ export default function CommunityScreen() {
     username: 'anonymous',
     selectedImage: 'boy_avatar1.png',
   });
+  
+  const [commentBoxVisible, setCommentBoxVisible] = useState({});
+  const [commentTexts, setCommentTexts] = useState({});
 
   useEffect(() => {
     fetchPosts();
@@ -59,7 +61,6 @@ export default function CommunityScreen() {
   };
 
   const createPost = async () => {
-
     if (!newPostText.trim()) {
       Alert.alert('Error', 'Post text cannot be empty.');
       return;
@@ -90,7 +91,6 @@ export default function CommunityScreen() {
   };
 
   const handleLike = async (postId) => {
-    console.log(postId)
     try {
       const response = await fetch(`${URL}:8000/feed/like`, {
         method: 'POST',
@@ -103,7 +103,6 @@ export default function CommunityScreen() {
       });
 
       if (response.ok) {
-        const data = await response.json();
         updatePostLikes(postId); // Update the UI
       } else {
         Alert.alert('Error', 'Failed to like the post.');
@@ -114,9 +113,59 @@ export default function CommunityScreen() {
     }
   };
 
-  const handleComment = (postId) => {
-    console.log(`Opening comments for post with ID: ${postId}`);
+  const toggleCommentBox = (postId) => {
+    setCommentBoxVisible((prev) => ({
+      ...prev,
+      [postId]: !prev[postId],
+    }));
   };
+
+  const handleCommentTextChange = (postId, text) => {
+    setCommentTexts((prev) => ({
+      ...prev,
+      [postId]: text,
+    }));
+  };
+
+  const submitComment = async (postId) => {
+    const commentText = commentTexts[postId]?.trim();
+    if (!commentText) {
+      Alert.alert('Error', 'Comment text cannot be empty.');
+      return;
+    }
+
+    try {
+      const response = await fetch(`${URL}:8000/feed/comment`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          post_id: postId,
+          text: commentText,
+        }),
+      });
+
+      if (response.ok) {
+        Alert.alert('Success', 'Comment added successfully.');
+        setCommentTexts((prev) => ({
+          ...prev,
+          [postId]: '',
+        }));
+        setCommentBoxVisible((prev) => ({
+          ...prev,
+          [postId]: false,
+        }));
+        fetchPosts();
+      } else {
+        Alert.alert('Error', 'Failed to add comment.');
+      }
+    } catch (error) {
+      console.error('Error adding comment:', error);
+      Alert.alert('Error', 'Failed to add comment.');
+    }
+  };
+
 
   const updatePostLikes = (postId) => {
     setPosts((prevPosts) =>
@@ -133,8 +182,6 @@ export default function CommunityScreen() {
     );
   };
 
-  
-  
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollArea}>
@@ -185,12 +232,27 @@ export default function CommunityScreen() {
                       <Text style={styles.footerText}>{post.likes?.length || 0} likes</Text>
                     </View>
                     <View style={styles.statItem}>
-                      <TouchableOpacity onPress={() => handleComment(post._id)}>
+                      <TouchableOpacity onPress={() => toggleCommentBox(post._id)}>
                         <MessageCircle />
                       </TouchableOpacity>
                       <Text style={styles.footerText}>{post.commands?.length || 0} Comments</Text>
                     </View>
                   </View>
+
+                  {/* Comment Box */}
+                  {commentBoxVisible[post._id] && (
+                    <View style={styles.commentBox}>
+                      <TextInput
+                        placeholder="Write a comment..."
+                        value={commentTexts[post._id] || ''}
+                        onChangeText={(text) => handleCommentTextChange(post._id, text)}
+                        style={styles.commentInput}
+                      />
+                      <TouchableOpacity onPress={() => submitComment(post._id)}>
+                        <Text style={styles.postCommentButton}>Post Comment</Text>
+                      </TouchableOpacity>
+                    </View>
+                  )}
                 </CardFooter>
               </Card>
             ))}
@@ -278,9 +340,24 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     backgroundColor: '#ddd',
   },
-  avatarContainer: {
-    overflow: 'hidden',
-    backgroundColor: '#ddd',
+  commentBox: {
+    marginTop: 10,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
   },
+  commentInput: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10,
+  },
+  postCommentButton: {
+    color: '#007BFF',
+    textAlign: 'center',
+  },
+
 
 });
