@@ -11,7 +11,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { Card, CardHeader, CardContent, CardFooter } from '../components/Card';
-import { Heart, MessageCircle } from '../components/Icon';
+import { Heart, MessageCircle, HeartOutline, HeartFilled} from '../components/Icon';
 import { imageMapping } from '../helpers/avatar';
 import { URL } from '@env';
 
@@ -59,6 +59,7 @@ export default function CommunityScreen() {
   };
 
   const createPost = async () => {
+
     if (!newPostText.trim()) {
       Alert.alert('Error', 'Post text cannot be empty.');
       return;
@@ -88,14 +89,52 @@ export default function CommunityScreen() {
     }
   };
 
-  const handleLike = (postId) => {
-    console.log(`Liked post with ID: ${postId}`);
+  const handleLike = async (postId) => {
+    console.log(postId)
+    try {
+      const response = await fetch(`${URL}:8000/feed/like`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          post_id: postId,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        updatePostLikes(postId); // Update the UI
+      } else {
+        Alert.alert('Error', 'Failed to like the post.');
+      }
+    } catch (error) {
+      console.error('Error liking post:', error);
+      Alert.alert('Error', 'Failed to like the post.');
+    }
   };
 
   const handleComment = (postId) => {
     console.log(`Opening comments for post with ID: ${postId}`);
   };
 
+  const updatePostLikes = (postId) => {
+    setPosts((prevPosts) =>
+      prevPosts.map((post) =>
+        post._id === postId
+          ? {
+              ...post,
+              likes: post.likes.includes(currentUser.username)
+                ? post.likes.filter((user) => user !== currentUser.username) // Unlike
+                : [...post.likes, currentUser.username], // Like
+            }
+          : post
+      )
+    );
+  };
+
+  
+  
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollArea}>
@@ -137,7 +176,11 @@ export default function CommunityScreen() {
                   <View style={styles.footerStats}>
                     <View style={styles.statItem}>
                       <TouchableOpacity onPress={() => handleLike(post._id)}>
-                        <Heart />
+                        {post.likes.includes(currentUser.username) ? (
+                          <HeartFilled />
+                        ) : (
+                          <HeartOutline />
+                        )}
                       </TouchableOpacity>
                       <Text style={styles.footerText}>{post.likes?.length || 0} likes</Text>
                     </View>
