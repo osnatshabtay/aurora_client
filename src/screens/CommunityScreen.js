@@ -147,7 +147,6 @@ export default function CommunityScreen() {
       });
 
       if (response.ok) {
-        Alert.alert('Success', 'Comment added successfully.');
         setCommentTexts((prev) => ({
           ...prev,
           [postId]: '',
@@ -253,6 +252,14 @@ export default function CommunityScreen() {
                       </TouchableOpacity>
                     </View>
                   )}
+                  {/* Display Comments */}
+                  {post.commands.map((comment, idx) => (
+                    <View key={idx} style={styles.commentItem}>
+                      <Text style={styles.commentUser}>{comment.username}</Text>
+                      <Text style={styles.commentText}>{comment.text}</Text>
+                    </View>
+                  ))}
+
                 </CardFooter>
               </Card>
             ))}
@@ -357,6 +364,19 @@ const styles = StyleSheet.create({
   postCommentButton: {
     color: '#007BFF',
     textAlign: 'center',
+  },
+  commentItem: {
+    marginTop: 8,
+    padding: 8,
+    backgroundColor: '#f9f9f9',
+    borderRadius: 5,
+  },
+  commentUser: {
+    fontWeight: '600',
+  },
+  commentText: {
+    marginTop: 4,
+    fontSize: 14,
   },
 
 
