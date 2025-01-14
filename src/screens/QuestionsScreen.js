@@ -40,8 +40,8 @@ const QuestionnaireScreen = () => {
 
   const handleAnswerSelect = (option) => {
     const currentQuestion = questions[currentQuestionIndex];
-    const isGenderQuestion = currentQuestion.question === "איך תרצה שנפנה אלייך? ";
-    const isTraumaQuestion = currentQuestion.question === "האם חווית אירוע טראומטי?";
+    const isGenderQuestion = currentQuestion.index === 1;  // "איך תרצה שנפנה אלייך? "
+    const isTraumaQuestion = currentQuestion.index === 34; // "האם חווית אירוע טראומטי?"
     const isImage = option.endsWith('.png');
 
     // Save the selected image to state
@@ -51,17 +51,33 @@ const QuestionnaireScreen = () => {
   
 
     if (isGenderQuestion) {
-      if (option === "זכר") {
-        setQuestions((prevQuestions) =>
-          prevQuestions.filter((q) => q.question !== "תבחרי עבורך תמונה :)")
-        );
-      } else if (option === "נקבה") {
-        setQuestions((prevQuestions) =>
-          prevQuestions.filter((q) => q.question !== "תבחר עבורך תמונה :)")
-        );
-      }
+      setQuestions((prevQuestions) => {
+        // Remove both image selection questions first
+        const filteredQuestions = prevQuestions.filter((q) => q.index !== 42 && q.index !== 43);
+    
+        // Add the relevant image selection question based on gender
+        if (option === "זכר") {
+          filteredQuestions.push({
+            index: 43,
+            question: "תבחר עבורך תמונה :)",
+            options: ["boy_avatar1.png", "boy_avatar2.png", "boy_avatar3.png", "boy_avatar4.png", "boy_avatar5.png", "boy_avatar6.png", "boy_avatar7.png", "boy_avatar8.png"],
+            multiple: false,
+            trauma: false
+          });
+        } else if (option === "נקבה") {
+          filteredQuestions.push({
+            index: 42,
+            question: "תבחרי עבורך תמונה :)",
+            options: ["girl_avatar1.png", "girl_avatar2.png", "girl_avatar3.png", "girl_avatar4.png", "girl_avatar5.png", "girl_avatar6.png", "girl_avatar7.png", "girl_avatar8.png", "girl_avatar9.png", "girl_avatar10.png", "girl_avatar11.png", "girl_avatar12.png"],
+            multiple: false,
+            trauma: false
+          });
+        }
+    
+        return filteredQuestions;
+      });
     }
-
+            
     // Handle trauma-specific questions
     if (isTraumaQuestion) {
       setShowTraumaQuestions(option === "כן");
@@ -70,22 +86,24 @@ const QuestionnaireScreen = () => {
     // Update answers
     if (currentQuestion.multiple) {
       const currentAnswers = answers[currentQuestionIndex] || [];
+    
+      // Toggle the selected option
       if (currentAnswers.includes(option)) {
-        setAnswers({
-          ...answers,
+        setAnswers((prevAnswers) => ({
+          ...prevAnswers,
           [currentQuestionIndex]: currentAnswers.filter((item) => item !== option),
-        });
+        }));
       } else {
-        setAnswers({
-          ...answers,
+        setAnswers((prevAnswers) => ({
+          ...prevAnswers,
           [currentQuestionIndex]: [...currentAnswers, option],
-        });
+        }));
       }
     } else {
-      setAnswers({
-        ...answers,
+      setAnswers((prevAnswers) => ({
+        ...prevAnswers,
         [currentQuestionIndex]: option,
-      });
+      }));
     }
   };
 
