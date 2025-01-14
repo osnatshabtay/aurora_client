@@ -301,7 +301,7 @@ const styles = StyleSheet.create({
   },
   addPostButton: {
     marginLeft: 8,
-    backgroundColor: '#560CCE',
+    backgroundColor: '#085686',
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 8,

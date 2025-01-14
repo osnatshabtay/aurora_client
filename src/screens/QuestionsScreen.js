@@ -118,6 +118,13 @@ const QuestionnaireScreen = () => {
 
   const renderOption = (option) => {
     const isImage = option.endsWith('.png');
+    const currentAnswer = answers[currentQuestionIndex];
+    
+    // Check if the option is selected
+    const isSelected = Array.isArray(currentAnswer)
+      ? currentAnswer.includes(option)
+      : currentAnswer === option;
+  
     if (isImage && imageMapping[option]) {
       return (
         <Image
@@ -131,14 +138,14 @@ const QuestionnaireScreen = () => {
       <Text
         style={[
           styles.optionText,
-          answers[currentQuestionIndex]?.includes(option) && styles.selectedOptionText,
+          isSelected && styles.selectedOptionText,
         ]}
       >
         {option}
       </Text>
     );
   };
-    
+         
   const handleNextQuestion = async () => {
     if (currentQuestionIndex < filteredQuestions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
@@ -224,15 +231,18 @@ const QuestionnaireScreen = () => {
         <View style={styles.optionsContainer}>
           {filteredQuestions[currentQuestionIndex].options.map((option, index) => (
             <TouchableOpacity
-              key={index}
-              style={[
-                styles.optionButton,
-                answers[currentQuestionIndex]?.includes(option) && styles.selectedOption,
-              ]}
-              onPress={() => handleAnswerSelect(option)}
-            >
-              {renderOption(option)}
-            </TouchableOpacity>
+            key={index}
+            style={[
+              styles.optionButton,
+              Array.isArray(answers[currentQuestionIndex])
+                ? answers[currentQuestionIndex]?.includes(option) && styles.selectedOption
+                : answers[currentQuestionIndex] === option && styles.selectedOption,
+            ]}
+            onPress={() => handleAnswerSelect(option)}
+          >
+            {renderOption(option)}
+          </TouchableOpacity>
+          
           ))}
         </View>
         <View style={styles.buttonsContainer}>
