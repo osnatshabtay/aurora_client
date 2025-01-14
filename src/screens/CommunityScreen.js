@@ -11,11 +11,10 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { Card, CardHeader, CardContent, CardFooter } from '../components/Card';
-import { Heart, MessageCircle } from '../components/Icon';
+import { MessageCircle, HeartOutline, HeartFilled } from '../components/Icon';
 import { imageMapping } from '../helpers/avatar';
 import { theme } from '../core/theme'; 
 import { URL } from '@env';
-
 
 const Avatar = ({ size = 40, uri }) => {
   const imageSource = imageMapping[uri] || require('../assets/logo.png');
@@ -37,6 +36,9 @@ export default function CommunityScreen() {
     username: 'anonymous',
     selectedImage: 'boy_avatar1.png',
   });
+  
+  const [commentBoxVisible, setCommentBoxVisible] = useState({});
+  const [commentTexts, setCommentTexts] = useState({});
 
   useEffect(() => {
     fetchPosts();
@@ -89,12 +91,95 @@ export default function CommunityScreen() {
     }
   };
 
-  const handleLike = (postId) => {
-    console.log(`Liked post with ID: ${postId}`);
+  const handleLike = async (postId) => {
+    try {
+      const response = await fetch(`${URL}:8000/feed/like`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          post_id: postId,
+        }),
+      });
+
+      if (response.ok) {
+        updatePostLikes(postId); // Update the UI
+      } else {
+        Alert.alert('Error', 'Failed to like the post.');
+      }
+    } catch (error) {
+      console.error('Error liking post:', error);
+      Alert.alert('Error', 'Failed to like the post.');
+    }
   };
 
-  const handleComment = (postId) => {
-    console.log(`Opening comments for post with ID: ${postId}`);
+  const toggleCommentBox = (postId) => {
+    setCommentBoxVisible((prev) => ({
+      ...prev,
+      [postId]: !prev[postId],
+    }));
+  };
+
+  const handleCommentTextChange = (postId, text) => {
+    setCommentTexts((prev) => ({
+      ...prev,
+      [postId]: text,
+    }));
+  };
+
+  const submitComment = async (postId) => {
+    const commentText = commentTexts[postId]?.trim();
+    if (!commentText) {
+      Alert.alert('Error', 'Comment text cannot be empty.');
+      return;
+    }
+
+    try {
+      const response = await fetch(`${URL}:8000/feed/comment`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          post_id: postId,
+          text: commentText,
+        }),
+      });
+
+      if (response.ok) {
+        setCommentTexts((prev) => ({
+          ...prev,
+          [postId]: '',
+        }));
+        setCommentBoxVisible((prev) => ({
+          ...prev,
+          [postId]: false,
+        }));
+        fetchPosts();
+      } else {
+        Alert.alert('Error', 'Failed to add comment.');
+      }
+    } catch (error) {
+      console.error('Error adding comment:', error);
+      Alert.alert('Error', 'Failed to add comment.');
+    }
+  };
+
+
+  const updatePostLikes = (postId) => {
+    setPosts((prevPosts) =>
+      prevPosts.map((post) =>
+        post._id === postId
+          ? {
+              ...post,
+              likes: post.likes.includes(currentUser.username)
+                ? post.likes.filter((user) => user !== currentUser.username) // Unlike
+                : [...post.likes, currentUser.username], // Like
+            }
+          : post
+      )
+    );
   };
 
   return (
@@ -138,17 +223,44 @@ export default function CommunityScreen() {
                   <View style={styles.footerStats}>
                     <View style={styles.statItem}>
                       <TouchableOpacity onPress={() => handleLike(post._id)}>
-                        <Heart />
+                        {post.likes.includes(currentUser.username) ? (
+                          <HeartFilled />
+                        ) : (
+                          <HeartOutline />
+                        )}
                       </TouchableOpacity>
                       <Text style={styles.footerText}>{post.likes?.length || 0} likes</Text>
                     </View>
                     <View style={styles.statItem}>
-                      <TouchableOpacity onPress={() => handleComment(post._id)}>
+                      <TouchableOpacity onPress={() => toggleCommentBox(post._id)}>
                         <MessageCircle />
                       </TouchableOpacity>
                       <Text style={styles.footerText}>{post.commands?.length || 0} Comments</Text>
                     </View>
                   </View>
+
+                  {/* Comment Box */}
+                  {commentBoxVisible[post._id] && (
+                    <View style={styles.commentBox}>
+                      <TextInput
+                        placeholder="Write a comment..."
+                        value={commentTexts[post._id] || ''}
+                        onChangeText={(text) => handleCommentTextChange(post._id, text)}
+                        style={styles.commentInput}
+                      />
+                      <TouchableOpacity onPress={() => submitComment(post._id)}>
+                        <Text style={styles.postCommentButton}>Post Comment</Text>
+                      </TouchableOpacity>
+                    </View>
+                  )}
+                  {/* Display Comments */}
+                  {post.commands.map((comment, idx) => (
+                    <View key={idx} style={styles.commentItem}>
+                      <Text style={styles.commentUser}>{comment.username}</Text>
+                      <Text style={styles.commentText}>{comment.text}</Text>
+                    </View>
+                  ))}
+
                 </CardFooter>
               </Card>
             ))}
@@ -236,9 +348,37 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     backgroundColor: '#ddd',
   },
-  avatarContainer: {
-    overflow: 'hidden',
-    backgroundColor: '#ddd',
+  commentBox: {
+    marginTop: 10,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
   },
+  commentInput: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10,
+  },
+  postCommentButton: {
+    color: '#007BFF',
+    textAlign: 'center',
+  },
+  commentItem: {
+    marginTop: 8,
+    padding: 8,
+    backgroundColor: '#f9f9f9',
+    borderRadius: 5,
+  },
+  commentUser: {
+    fontWeight: '600',
+  },
+  commentText: {
+    marginTop: 4,
+    fontSize: 14,
+  },
+
 
 });
