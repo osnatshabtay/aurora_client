@@ -37,6 +37,13 @@ export default function HomeScreen({ navigation }) {
       description: 'גלה תוכן חדש ומעניין',
       backgroundColor: '#F7FAFC',
     },
+    {
+      id: 4,
+      title: 'מצא חבר',
+      image: require('../assets/talkWithFriend.png'),
+      description: 'גלה חברים חדשים',
+      backgroundColor: '#FFF5F5',
+    },
   ];
 
   const handleCategoryPress = (id) => {
@@ -46,6 +53,8 @@ export default function HomeScreen({ navigation }) {
       navigation.navigate('CommunityScreen');
     } else if (id === 3) {
       navigation.navigate('EnrichmentContent');
+    } else if (id === 4) {
+      navigation.navigate('SocialGraph');
     }
   };
 
