@@ -1,24 +1,45 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, FlatList, TextInput, TouchableOpacity, Text } from 'react-native';
-import { theme } from '../core/theme'; 
+import { View, StyleSheet, FlatList, TextInput, TouchableOpacity, Text, ActivityIndicator } from 'react-native';
+import { theme } from '../core/theme';
 import { MaterialIcons } from '@expo/vector-icons';
-
+import { URL } from '@env';
 
 export default function ChatBotScreen() {
     const [messages, setMessages] = useState([]);
     const [inputText, setInputText] = useState('');
+    const [loading, setLoading] = useState(false);
 
-    // Add welcome message on load
+    //Load chat history from FastAPI
     useEffect(() => {
-        const initialMessage = {
-            id: '1',
-            text: 'שלום! איך אפשר לעזור היום?',
-            sender: 'bot',
-        };
-        setMessages([initialMessage]);
+        fetchChatHistory();
     }, []);
 
-    const sendMessage = () => {
+    const fetchChatHistory = async () => {
+        try {
+            const response = await fetch(`${URL}:8000/chatbot/chat_history`, {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' },
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch chat history.');
+            }
+
+            const result = await response.json();
+            if (result.chat_history) {
+                const formattedMessages = result.chat_history.map((msg, index) => ({
+                    id: index.toString(),
+                    text: msg.content,
+                    sender: msg.role === 'user' ? 'user' : 'bot',
+                }));
+                setMessages(formattedMessages);
+            }
+        } catch (error) {
+            console.error('Error fetching chat history:', error.message);
+        }
+    };
+
+    const sendMessage = async () => {
         if (inputText.trim() === '') return;
 
         const newMessage = {
@@ -27,18 +48,37 @@ export default function ChatBotScreen() {
             sender: 'user',
         };
 
+        //Add user message to the UI
         setMessages((prevMessages) => [...prevMessages, newMessage]);
         setInputText('');
+        setLoading(true);
 
-        // Simulating a bot response
-        setTimeout(() => {
+        try {
+            const response = await fetch(`${URL}:8000/chatbot/chat_with_history`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: inputText }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to send message.');
+            }
+
+            const result = await response.json();
+
             const botMessage = {
                 id: Math.random().toString(),
-                text: "אני כאן כדי לעזור! 😊",
+                text: result.response,
                 sender: 'bot',
             };
+
+            //Add bot response to UI
             setMessages((prevMessages) => [...prevMessages, botMessage]);
-        }, 1000);
+        } catch (error) {
+            console.error('Error sending message:', error.message);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const renderMessageItem = ({ item }) => (
@@ -49,13 +89,13 @@ export default function ChatBotScreen() {
 
     return (
         <View style={styles.container}>
-            {/* Top Bar with Support Chat Title */}
+            {/*Top Bar */}
             <View style={styles.topBar}>
                 <Text style={styles.chatTitle}>צ׳אט תמיכה</Text>
                 <Text style={styles.chatSubtitle}>תמיד כאן כדי לעזור</Text>
             </View>
 
-            {/* Chat Messages Section */}
+            {/*Chat Messages Section */}
             <FlatList
                 data={messages}
                 renderItem={renderMessageItem}
@@ -63,7 +103,10 @@ export default function ChatBotScreen() {
                 contentContainerStyle={styles.messageContainer}
             />
 
-            {/* Chat Input Section */}
+            {/*Loading Indicator */}
+            {loading && <ActivityIndicator size="small" color={theme.colors.primary} />}
+
+            {/*Chat Input Section */}
             <View style={styles.inputContainer}>
                 <TextInput
                     style={styles.input}
@@ -79,7 +122,6 @@ export default function ChatBotScreen() {
         </View>
     );
 }
-
 
 const styles = StyleSheet.create({
     container: {
@@ -152,4 +194,3 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
 });
-
