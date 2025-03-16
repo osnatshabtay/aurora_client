@@ -18,34 +18,27 @@ export default function HomeScreenManager({ navigation }) {
   const categories = [
     {
     id: 1,
-    title: 'אישור משתמשים',
-    image: require('../assets/users.png'),
-    description: 'אשר משתמשים חדשים למערכת',
-    backgroundColor: '#f1e9f5',
-    },
-    {
-    id: 2,
     title: 'אישור פוסטים',
     image: require('../assets/posts.png'),
     description: 'ראה פוסטים הממתינים לאישורך',
     backgroundColor: '#F7FAFC',
     },
     {
-      id: 3,
+      id: 2,
       title: 'צ׳אט בוט',
       image: require('../assets/chatbot.png'),
       description: 'שוחח עם הבוט שלנו',
       backgroundColor: '#FFF5F5',
     },
     {
-      id: 4,
+      id: 3,
       title: 'קהילה שיתופית',
       image: require('../assets/community.png'),
       description: 'הצטרף לקהילה שלנו',
       backgroundColor: '#f1e9f5',
     },
     {
-      id: 5,
+      id: 4,
       title: 'תוכן העשרה',
       image: require('../assets/contant.png'),
       description: 'גלה תוכן חדש ומעניין',
@@ -55,10 +48,12 @@ export default function HomeScreenManager({ navigation }) {
 
   const handleCategoryPress = (id) => {
     if (id === 1) {
-      navigation.navigate('ChatBotScreen');
+      navigation.navigate('PostApprovalScreen');
     } else if (id === 2) {
-      navigation.navigate('CommunityScreen');
+      navigation.navigate('ChatBotScreen');
     } else if (id === 3) {
+      navigation.navigate('CommunityScreen');
+    } else if (id === 4) {
       navigation.navigate('EnrichmentContent');
     }
   };
