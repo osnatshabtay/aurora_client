@@ -9,6 +9,5 @@ export { default as CategoryContent } from './CategoryContent'
 export { default as HomeScreen } from './HomeScreen'
 export { default as CommunityScreen } from './CommunityScreen'
 export { default as ChatBotScreen } from './ChatBotScreen'
-
-
 export { default as HomeScreenManager } from './HomeScreenManager'
+export { default as PostApprovalScreen } from './PostApprovalScreen'

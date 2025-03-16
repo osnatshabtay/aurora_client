@@ -20,4 +20,8 @@ export const imageMapping = {
     "girl_avatar11.png": require("../assets/avatar/girl_avatar11.png"),
     "girl_avatar12.png": require("../assets/avatar/girl_avatar12.png"),
   };
-  
+
+// Function for the posts - to get the image  . 'boy_avatar1.png' is the default image
+export const getAvatarImage = (imageName) => {
+    return imageMapping[imageName] || require("../assets/avatar/boy_avatar1.png"); 
+};  
