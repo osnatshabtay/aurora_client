@@ -16,6 +16,8 @@ import {
   CommunityScreen,
   ChatBotScreen,
   HomeScreenManager,
+  UserApprovalScreen,
+  PostApprovalScreen,
 } from './src/screens'
 
 const Stack = createStackNavigator()
@@ -41,8 +43,9 @@ export default function App() {
           <Stack.Screen name="CategoryContent" component={CategoryContent}/>
           <Stack.Screen name="CommunityScreen" component={CommunityScreen}/>
           <Stack.Screen name="ChatBotScreen" component={ChatBotScreen} />
-
           <Stack.Screen name="HomeScreenManager" component={HomeScreenManager}/>
+          <Stack.Screen name="PostApprovalScreen" component={PostApprovalScreen}/>
+
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>
