@@ -48,7 +48,7 @@ export default function CommunityScreen() {
     try {
       const response = await fetch(`${URL}:8000/feed/all_posts`);
       const data = await response.json();
-      setPosts(data.posts);
+      setPosts(data.posts.filter(post => post.approved));
       setCurrentUser({
         username: data.current_username,
         selectedImage: data.current_username_image,
@@ -79,7 +79,7 @@ export default function CommunityScreen() {
       });
 
       if (response.ok) {
-        Alert.alert('Success', 'Post created successfully.');
+        Alert.alert('הפוסט נשלח לאישור מנהל', 'לאחר אישורו, הוא יתפרסם בקהילה.');
         fetchPosts(); // Refresh posts after creating a new one
         setNewPostText('');
       } else {
