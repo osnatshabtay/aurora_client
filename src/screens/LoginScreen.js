@@ -42,19 +42,27 @@ export default function LoginScreen({ navigation }) {
   
       if (!response.ok) {
         const errorMessage = await response.text();
-        throw new Error(errorMessage || 'Failed to sign up. Please try again.');
+        throw new Error(errorMessage || 'Failed to log in. Please try again.');
       }
   
       const result = await response.json();
       console.log('Server response:', result);
   
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'HomeScreen' }],
-      });
+      
+      if (result.is_admin) {
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'HomeScreenManager' }],
+        });
+      } else {
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'HomeScreen' }],
+        });
+      }
       
     } catch (error) {
-      console.error('Error during sign up:', error.message);
+      console.error('Error during log in:', error.message);
       alert('Error: ' + error.message);
     }
   };
