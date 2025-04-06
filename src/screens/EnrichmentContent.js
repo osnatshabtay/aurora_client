@@ -1,58 +1,39 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 import BackButton from '../components/BackButton'; 
 import Background from '../components/Background';
-
-const categories = [
-  {
-    icon: '🌬️',
-    titleHe: 'תרגול נשימה והרפיה',
-    titleEn: 'תרגולים שיעזרו לך להירגע ולשחרר מתח נפשי',
-    image: require('../assets/1.jpeg'),
-    color: ['#FFF5F5'],
-    content: [
-      { type: 'text', value: 'בואו ללמוד כיצד לבצע תרגול נשימה פשוט שמסייע בהרפיה של הגוף והנפש' },
-      { type: 'video', value: 'https://www.youtube.com/embed/bnCuQRO5xjE' },
-      { type: 'text', value: 'בנוסף, תוכלו לצפות בשיטת 4-7-8, שיטה ייחודית לנשימה מודעת ונכונה' },
-      { type: 'video', value: 'https://www.youtube.com/embed/n8luVodumAE' },
-    ]
-  },
-  {
-    icon: '💪',
-    titleHe: 'העצמה אישית והתמודדות עם פחדים',
-    titleEn: 'כלים להתמודדות עם פחדים, חרדות והעצמת הביטחון העצמי',
-    image: require('../assets/2.jpeg'),
-    color: ['#F7FAFC'],
-    content: [
-      { type: 'text', value: 'תרגיל "דמיון מודרך" להתמודדות עם פחדים' },
-      { type: 'video', value: 'https://www.youtube.com/embed/SYrpH4CnfKQ' },
-    ]
-  },
-  {
-    icon: '🌿',
-    titleHe: 'התמודדות עם טראומה ודיכאון',
-    titleEn: 'כלים וטכניקות להתמודדות עם טראומה ודיכאון, להקל על ההתמודדות היומיומית',
-    image: require('../assets/3.jpeg'),
-    color: ['#f1e9f5'],
-    content: [
-      { type: 'text', value: 'תרגילי יוגה לעידוד תחושת רוגע' },
-      { type: 'video', value: 'https://www.youtube.com/embed/8TuRYV71Rgo' },
-    ]
-  },
-  {
-    icon: '🧘‍♀️',
-    titleHe: 'מדיטציה ומיינדפולנס',
-    titleEn: 'תרגולי מדיטציה ומיינדפולנס לשיפור הרוגע הפנימי',
-    image: require('../assets/4.jpeg'),
-    color: ['#FFF5F5'],
-    content: [
-      { type: 'text', value: 'מדיטציית מיינדפולנס של 5 דקות - לרגיעה ושלווה מיידיים' },
-      { type: 'video', value: 'https://www.youtube.com/embed/TENB02x_cig' },
-    ]
-  },
-];
+import { categories } from '../helpers/category';
+import { URL } from '@env';
 
 export default function EnrichmentContent({ navigation }) {
+  const [userCategories, setUserCategories] = useState([]);
+
+  useEffect(() => {
+    const fetchUserCategories = async () => {
+      try {
+        const response = await fetch(`${URL}:8000/recommendations/user_enrichment`);
+        const data = await response.json();
+
+        if (data.classified_profile) {
+          // שלוף רק את הקטגוריות שהן true
+          const relevant = Object.entries(data.classified_profile)
+            .filter(([_, value]) => value === true)
+            .map(([key]) => key);
+          setUserCategories(relevant);
+        }
+      } catch (error) {
+        console.error('Error fetching user enrichment:', error);
+      }
+    };
+
+    fetchUserCategories();
+  }, []);
+
+  // מסנן רק את הקטגוריות המתאימות
+  const filteredCategories = categories.filter(category =>
+    userCategories.includes(category.category)
+  );
+
   return (
     <View style={styles.container}>
       <BackButton goBack={navigation.goBack} />
@@ -67,7 +48,7 @@ export default function EnrichmentContent({ navigation }) {
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.scrollViewContent}
       >
-        {categories.map((category, index) => (
+        {filteredCategories.map((category, index) => (
           <TouchableOpacity
             key={index}
             style={[styles.card, { backgroundColor: category.color[0] }]}
@@ -101,6 +82,7 @@ export default function EnrichmentContent({ navigation }) {
     </View>    
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {

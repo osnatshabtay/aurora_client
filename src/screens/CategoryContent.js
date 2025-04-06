@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Linking, TouchableOpacity } from 'react-native';
 import { WebView } from 'react-native-webview';
 
 export default function CategoryContent({ route }) {
@@ -29,8 +29,26 @@ export default function CategoryContent({ route }) {
             />
           );
         }
-
-        return null; 
+        if (item.type === 'website') {
+          return (
+            <View key={index} style={styles.websiteContainer}>
+              <WebView
+                source={{ uri: item.value }}
+                style={styles.websitePreview}
+                startInLoadingState
+                scalesPageToFit={true}
+              />
+              <TouchableOpacity
+                onPress={() => Linking.openURL(item.value)}
+                style={styles.websiteButton}
+              >
+                <Text style={styles.websiteLink}>🌐 צפייה באתר המלא</Text>
+              </TouchableOpacity>
+            </View>
+          );
+        }
+                
+      return null; 
       })}
     </ScrollView>
   );
@@ -72,5 +90,35 @@ const styles = StyleSheet.create({
     height: 200,
     marginBottom: 16,
   },
+  websiteContainer: {
+    marginBottom: 24,
+    backgroundColor: '#ffffff',
+    borderRadius: 12,
+    height: 200,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 4,
+  },
+  
+  websitePreview: {
+    height: 300,
+  },
+  
+  websiteButton: {
+    backgroundColor: '#E3F2FD',
+    paddingVertical: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#BBDEFB',
+    alignItems: 'center',
+  },
+  
+  websiteLink: {
+    color: '#1E88E5',
+    fontSize: 16,
+    fontWeight: 'bold',
+  }  
 });
 
