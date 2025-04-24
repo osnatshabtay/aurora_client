@@ -18,6 +18,7 @@ import {
   HomeScreenManager,
   UserApprovalScreen,
   PostApprovalScreen,
+  EmotionsCalendar,
 } from './src/screens'
 
 const Stack = createStackNavigator()
@@ -45,6 +46,7 @@ export default function App() {
           <Stack.Screen name="ChatBotScreen" component={ChatBotScreen} />
           <Stack.Screen name="HomeScreenManager" component={HomeScreenManager}/>
           <Stack.Screen name="PostApprovalScreen" component={PostApprovalScreen}/>
+          <Stack.Screen name="EmotionsCalendar" component={EmotionsCalendar}/>
 
         </Stack.Navigator>
       </NavigationContainer>
