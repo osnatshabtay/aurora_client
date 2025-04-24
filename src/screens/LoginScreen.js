@@ -42,6 +42,7 @@ export default function LoginScreen({ navigation }) {
   
       if (!response.ok) {
         const errorMessage = await response.text();
+        console.log('errorMessage:', errorMessage);
         throw new Error(errorMessage || 'Failed to log in. Please try again.');
       }
   
