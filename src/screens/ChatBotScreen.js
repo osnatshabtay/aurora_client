@@ -3,6 +3,7 @@ import { View, StyleSheet, FlatList, TextInput, TouchableOpacity, Text, Activity
 import { theme } from '../core/theme';
 import { MaterialIcons } from '@expo/vector-icons';
 import { URL } from '@env';
+import { api } from '../api';
 
 export default function ChatBotScreen() {
     const [messages, setMessages] = useState([]);
@@ -16,16 +17,8 @@ export default function ChatBotScreen() {
 
     const fetchChatHistory = async () => {
         try {
-            const response = await fetch(`${URL}:8000/chatbot/chat_history`, {
-                method: 'GET',
-                headers: { 'Content-Type': 'application/json' },
-            });
+            const result = await api('/chatbot/chat_history');
 
-            if (!response.ok) {
-                throw new Error('Failed to fetch chat history.');
-            }
-
-            const result = await response.json();
             if (result.chat_history) {
                 const formattedMessages = result.chat_history.map((msg, index) => ({
                     id: index.toString(),
@@ -54,17 +47,10 @@ export default function ChatBotScreen() {
         setLoading(true);
 
         try {
-            const response = await fetch(`${URL}:8000/chatbot/chat_with_history`, {
+            const result = await api('/chatbot/chat_with_history', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ message: inputText }),
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to send message.');
-            }
-
-            const result = await response.json();
+              });          
 
             const botMessage = {
                 id: Math.random().toString(),

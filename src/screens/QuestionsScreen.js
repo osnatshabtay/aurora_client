@@ -7,7 +7,7 @@ import Header from '../components/Header';
 import { theme } from '../core/theme';
 import {imageMapping} from '../helpers/avatar';
 import { URL } from '@env';
-
+import { api } from '../api';
 
 
 const QuestionnaireScreen = () => {
@@ -163,29 +163,22 @@ const QuestionnaireScreen = () => {
         gender: genderAnswer,
         selectedImage: imageSelect,
         };
-  
+
       try {
-        const response = await fetch(`${URL}:8000/users/questions`, {
+        await api('/users/questions', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(payload), // Send the updated payload
+          body: JSON.stringify(payload),
         });
-  
-        if (!response.ok) {
-          const errorMessage = await response.text();
-          throw new Error(errorMessage || 'Failed to save answers.');
-        }
-  
-        Alert.alert('Success', 'Answers saved successfully!');
+      
+        Alert.alert('איזה כיף', 'ברוך הבא אלינו');
         navigation.reset({
           index: 0,
           routes: [{ name: 'HomeScreen' }],
         });
+      
       } catch (error) {
         console.error('Error saving answers:', error.message);
-        Alert.alert('Error', 'Failed to save answers.');
+        Alert.alert('Error', error.message);
       }
     }
   };

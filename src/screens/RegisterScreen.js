@@ -12,6 +12,8 @@ import { theme } from '../core/theme'
 import { passwordValidator } from '../helpers/passwordValidator'
 import { nameValidator } from '../helpers/nameValidator'
 import { URL } from '@env';
+import * as SecureStore from 'expo-secure-store';
+
 
 
 export default function RegisterScreen({ navigation, route}) {
@@ -43,25 +45,18 @@ export default function RegisterScreen({ navigation, route}) {
     }
   
     try {
-      const response = await fetch(`${URL}:8000/users/register`, {
+      const result = await api('/users/register', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
         body: JSON.stringify({
           username: name.value,
           password: password.value,
           agreement: isChecked,
         }),
       });
-  
-      if (!response.ok) {
-        const errorMessage = await response.text();
-        throw new Error(errorMessage || 'Failed to sign up. Please try again.');
-      }
-  
-      const result = await response.json();
+      
       console.log('Server response:', result);
+
+      await SecureStore.setItemAsync('access_token', result.access_token);
   
       // Navigate to the Dashboard on success
       navigation.reset({

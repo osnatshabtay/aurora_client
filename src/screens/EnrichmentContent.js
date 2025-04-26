@@ -4,6 +4,8 @@ import BackButton from '../components/BackButton';
 import Background from '../components/Background';
 import { categories } from '../helpers/category';
 import { URL } from '@env';
+import { api } from '../api';
+
 
 export default function EnrichmentContent({ navigation }) {
   const [userCategories, setUserCategories] = useState([]);
@@ -11,9 +13,7 @@ export default function EnrichmentContent({ navigation }) {
   useEffect(() => {
     const fetchUserCategories = async () => {
       try {
-        const response = await fetch(`${URL}:8000/recommendations/user_enrichment`);
-        const data = await response.json();
-
+        const data = await api('/recommendations/user_enrichment');
         if (data.classified_profile) {
           // שלוף רק את הקטגוריות שהן true
           const relevant = Object.entries(data.classified_profile)

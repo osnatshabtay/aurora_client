@@ -15,6 +15,8 @@ import { MessageCircle, HeartOutline, HeartFilled } from '../components/Icon';
 import { imageMapping } from '../helpers/avatar';
 import { theme } from '../core/theme'; 
 import { URL } from '@env';
+import { api } from '../api';
+
 
 const Avatar = ({ size = 40, uri }) => {
   const imageSource = imageMapping[uri] || require('../assets/logo.png');
@@ -46,15 +48,14 @@ export default function CommunityScreen() {
 
   const fetchPosts = async () => {
     try {
-      const response = await fetch(`${URL}:8000/feed/all_posts`);
-      const data = await response.json();
+      const data = await api('/feed/all_posts');
       setPosts(data.posts.filter(post => post.approved));
       setCurrentUser({
         username: data.current_username,
         selectedImage: data.current_username_image,
       });
     } catch (error) {
-      console.error('Error fetching posts:', error);
+      console.error('Error fetching posts:', error.message);
       Alert.alert('Error', 'Failed to fetch posts.');
     } finally {
       setLoading(false);
@@ -66,51 +67,39 @@ export default function CommunityScreen() {
       Alert.alert('Error', 'Post text cannot be empty.');
       return;
     }
-
+  
     try {
-      const response = await fetch(`${URL}:8000/feed/write_post`, {
+      await api('/feed/write_post', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
         body: JSON.stringify({
           text: newPostText.trim(),
         }),
       });
-
-      if (response.ok) {
-        Alert.alert('הפוסט נשלח לאישור מנהל', 'לאחר אישורו, הוא יתפרסם בקהילה.');
-        fetchPosts(); // Refresh posts after creating a new one
-        setNewPostText('');
-      } else {
-        Alert.alert('Error', 'Failed to create post.');
-      }
+  
+      Alert.alert('הפוסט נשלח לאישור מנהל', 'לאחר אישורו, הוא יתפרסם בקהילה.');
+      fetchPosts();
+      setNewPostText('');
+  
     } catch (error) {
-      console.error('Error creating post:', error);
-      Alert.alert('Error', 'Failed to create post.');
+      console.error('Error creating post:', error.message);
+      Alert.alert('Error', 'הפוסט לא נוצר בהצלחה');
     }
   };
-
+  
   const handleLike = async (postId) => {
     try {
-      const response = await fetch(`${URL}:8000/feed/like`, {
+      await api('/feed/like', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
         body: JSON.stringify({
           post_id: postId,
         }),
       });
 
-      if (response.ok) {
-        updatePostLikes(postId); // Update the UI
-      } else {
-        Alert.alert('Error', 'Failed to like the post.');
-      }
+      updatePostLikes(postId); // Update the UI
+
     } catch (error) {
       console.error('Error liking post:', error);
-      Alert.alert('Error', 'Failed to like the post.');
+      Alert.alert('Error', 'לא ניתן לבצע כרגע את הפעולה');
     }
   };
 
@@ -131,35 +120,28 @@ export default function CommunityScreen() {
   const submitComment = async (postId) => {
     const commentText = commentTexts[postId]?.trim();
     if (!commentText) {
-      Alert.alert('Error', 'Comment text cannot be empty.');
+      Alert.alert('Error', 'תגובה לא יכולה להיות ריקה');
       return;
     }
-
     try {
-      const response = await fetch(`${URL}:8000/feed/comment`, {
+      await api('/feed/comment', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
         body: JSON.stringify({
           post_id: postId,
           text: commentText,
         }),
       });
+      
+      setCommentTexts((prev) => ({
+        ...prev,
+        [postId]: '',
+      }));
+      setCommentBoxVisible((prev) => ({
+        ...prev,
+        [postId]: false,
+      }));
+      fetchPosts();
 
-      if (response.ok) {
-        setCommentTexts((prev) => ({
-          ...prev,
-          [postId]: '',
-        }));
-        setCommentBoxVisible((prev) => ({
-          ...prev,
-          [postId]: false,
-        }));
-        fetchPosts();
-      } else {
-        Alert.alert('Error', 'Failed to add comment.');
-      }
     } catch (error) {
       console.error('Error adding comment:', error);
       Alert.alert('Error', 'Failed to add comment.');

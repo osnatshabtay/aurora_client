@@ -11,6 +11,9 @@ import { theme } from '../core/theme'
 import { passwordValidator } from '../helpers/passwordValidator'
 import { nameValidator } from '../helpers/nameValidator'
 import { URL } from '@env';
+import * as SecureStore from 'expo-secure-store';
+import { api } from '../api';
+
 
 
 export default function LoginScreen({ navigation }) {
@@ -28,27 +31,17 @@ export default function LoginScreen({ navigation }) {
     }
 
     try {
-      const response = await fetch(`${URL}:8000/users/login`, {
+      const result = await api('/users/login', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
         body: JSON.stringify({
           username: name.value,
-          password: password.value, 
-          agreement: true,
+          password: password.value,
         }),
       });
-  
-      if (!response.ok) {
-        const errorMessage = await response.text();
-        console.log('errorMessage:', errorMessage);
-        throw new Error(errorMessage || 'Failed to log in. Please try again.');
-      }
-  
-      const result = await response.json();
+
       console.log('Server response:', result);
-  
+
+      await SecureStore.setItemAsync('access_token', result.access_token);
       
       if (result.is_admin) {
         navigation.reset({
