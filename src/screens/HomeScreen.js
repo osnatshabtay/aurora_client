@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -8,10 +8,13 @@ import {
   ScrollView,
   Image,
   Dimensions,
+  FlatList,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Svg, Path, Circle, G, Text as SvgText } from 'react-native-svg';
 import { useSharedValue, withTiming } from 'react-native-reanimated';
+import * as SecureStore from 'expo-secure-store';
+import { URL } from '@env';
 
 const emotions = [
   { id: 1, name: "שמחה", color: "#FFD700", quote: "השמחה היא בחירה. בחרת נכון היום!", icon: "😊" },
@@ -27,10 +30,16 @@ const emotions = [
 const { width } = Dimensions.get('window');
 const cardWidth = (width - 60) / 2;
 const radius = 180;
+const SERVER_URL = `${URL}:8000`;
 
 export default function HomeScreen({ navigation }) {
+  const [currentUser, setCurrentUser] = useState({ username: 'anonymous' });
   const [selectedEmotionIndex, setSelectedEmotionIndex] = useState(0);
   const [darkMode, setDarkMode] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [unreadMessages, setUnreadMessages] = useState([]);
+
   const [dailyTip] = useState([
     "הקדש 5 דקות ביום למדיטציה",
     "שתה לפחות 8 כוסות מים ביום",
@@ -39,6 +48,38 @@ export default function HomeScreen({ navigation }) {
     "התקשר לחבר או בן משפחה",
   ][Math.floor(Math.random() * 5)]);
 
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      try {
+        const token = await SecureStore.getItemAsync('access_token');
+        if (!token) return;
+        const res = await fetch(`${SERVER_URL}/users/me`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        if (data.username) {
+          setCurrentUser({ username: data.username });
+          fetchUnreadMessages(data.username);
+        }
+      } catch (err) {
+        console.error('Error fetching user:', err);
+      }
+    };
+
+    const fetchUnreadMessages = async (username) => {
+      try {
+        const res = await fetch(`${SERVER_URL}/chat/unread/${username}`);
+        const data = await res.json();
+        setUnreadCount(data.count);
+        setUnreadMessages(data.messages);
+      } catch (err) {
+        console.error('Error fetching unread messages:', err);
+      }
+    };
+
+    fetchCurrentUser();
+  }, []);
+
   const angle = 180 / emotions.length;
   const pointerAngle = useSharedValue(0);
 
@@ -46,6 +87,73 @@ export default function HomeScreen({ navigation }) {
     setSelectedEmotionIndex(index);
     pointerAngle.value = withTiming(index * angle, { duration: 500 });
   };
+
+  const handleNavigateToChat = (targetUser) => {
+    setShowDropdown(false);
+    navigation.navigate('ChatScreen', {
+      currentUser: currentUser.username,
+      targetUser,
+    });
+  };
+
+  const selectedEmotion = emotions[selectedEmotionIndex];
+
+  const theme = {
+    background: darkMode ? "#121212" : selectedEmotion.color + '15',
+    card: darkMode ? "#1E1E1E" : "#FFFFFF",
+    text: darkMode ? "#E1E1E1" : "#333333",
+    subtext: darkMode ? "#AAAAAA" : "#666666",
+    accent: "#6A0DAD",
+  };
+
+  const styles = StyleSheet.create({
+    container: { flex: 1 },
+    logoutButton: { position: 'absolute', top: 20, left: 20, zIndex: 1 },
+    inboxIcon: { position: 'absolute', top: 20, right: 20, zIndex: 10 },
+    badge: {
+      position: 'absolute',
+      top: -6,
+      right: -6,
+      backgroundColor: 'red',
+      borderRadius: 10,
+      width: 20,
+      height: 20,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    badgeText: { color: '#fff', fontSize: 12, fontWeight: 'bold' },
+    dropdown: {
+      position: 'absolute',
+      top: 60,
+      right: 10,
+      backgroundColor: '#fff',
+      padding: 10,
+      borderRadius: 10,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.25,
+      shadowRadius: 3.84,
+      elevation: 5,
+      maxHeight: 200,
+      zIndex: 20,
+    },
+    dropdownItem: { fontSize: 16, paddingVertical: 6 },
+    scrollContent: { flexGrow: 1, padding: 20 },
+    headerContainer: { alignItems: 'flex-end', marginBottom: 32, marginTop: 20, padding: 20 },
+    greeting: { fontSize: 32, fontWeight: 'bold', color: '#2D3748', marginBottom: 8 },
+    subtitle: { fontSize: 18, color: '#718096', textAlign: 'right' },
+    quoteText: { fontSize: 16, fontWeight: '500', textAlign: 'center', marginTop: 12, lineHeight: 24 },
+    tipCard: { borderRadius: 15, padding: 20, marginBottom: 20, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 8, elevation: 3 },
+    tipTitle: { fontSize: 18, fontWeight: 'bold', marginBottom: 8, textAlign: 'right' },
+    tipText: { fontSize: 16, textAlign: 'right', lineHeight: 22 },
+    categoriesContainer: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', gap: 20 },
+    categoryCard: { width: cardWidth, borderRadius: 20, padding: 16, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.05, shadowRadius: 12, elevation: 3 },
+    imageContainer: { width: '100%', height: 120, marginBottom: 12, justifyContent: 'center', alignItems: 'center' },
+    categoryImage: { width: '80%', height: '80%' },
+    textContainer: {},
+    categoryTitle: { fontSize: 18, fontWeight: '700', color: '#2D3748', marginBottom: 4, textAlign: 'center' },
+    categoryDescription: { fontSize: 14, color: '#718096', textAlign: 'center', lineHeight: 20 },
+  });
 
   const renderEmotionPie = () => {
     let startAngle = 0;
@@ -80,59 +188,30 @@ export default function HomeScreen({ navigation }) {
             stroke={selectedEmotionIndex === index ? '#000' : 'transparent'}
             strokeWidth={selectedEmotionIndex === index ? 3 : 0}
           />
-        <SvgText
-          x={labelX}
-          y={labelY - 10}
-          fill="#000"
-          fontSize="16"
-          textAnchor="middle"
-          transform={`rotate(180, ${labelX}, ${labelY - 10})`}
-        >
-          {emotion.icon}
-        </SvgText>
-        <SvgText
-          x={labelX}
-          y={labelY + 10}
-          fill="#000"
-          fontSize="13"
-          fontWeight="bold"
-          textAnchor="middle"
-          transform={`rotate(180, ${labelX}, ${labelY + 10})`}
-        >
-          {emotion.name}
-        </SvgText>
+          <SvgText
+            x={labelX}
+            y={labelY - 10}
+            fill="#000"
+            fontSize="16"
+            textAnchor="middle"
+            transform={`rotate(180, ${labelX}, ${labelY - 10})`}
+          >
+            {emotion.icon}
+          </SvgText>
+          <SvgText
+            x={labelX}
+            y={labelY + 10}
+            fill="#000"
+            fontSize="13"
+            fontWeight="bold"
+            textAnchor="middle"
+            transform={`rotate(180, ${labelX}, ${labelY + 10})`}
+          >
+            {emotion.name}
+          </SvgText>
         </G>
       );
     });
-  };
-
-  const selectedEmotion = emotions[selectedEmotionIndex];
-
-  const theme = {
-    background: darkMode ? "#121212" : selectedEmotion.color + '15',
-    card: darkMode ? "#1E1E1E" : "#FFFFFF",
-    text: darkMode ? "#E1E1E1" : "#333333",
-    subtext: darkMode ? "#AAAAAA" : "#666666",
-    accent: "#6A0DAD",
-  };
-
-  const categories = [
-    { id: 1, title: 'צ׳אט בוט', image: require('../assets/chatbot.png'), description: 'שוחח עם הבוט שלנו', backgroundColor: '#FFF5F5' },
-    { id: 2, title: 'קהילה שיתופית', image: require('../assets/community.png'), description: 'הצטרף לקהילה שלנו', backgroundColor: '#f1e9f5' },
-    { id: 3, title: 'תוכן העשרה', image: require('../assets/contant.png'), description: 'גלה תוכן חדש ומעניין', backgroundColor: '#F7FAFC' },
-    { id: 4, title: 'מצא חבר', image: require('../assets/talkWithFriend.png'), description: 'גלה חברים חדשים', backgroundColor: '#FFF5F5' },
-  ];
-
-  const handleCategoryPress = (id) => {
-    if (id === 1) {
-      navigation.navigate('ChatBotScreen');
-    } else if (id === 2) {
-      navigation.navigate('CommunityScreen');
-    } else if (id === 3) {
-      navigation.navigate('EnrichmentContent');
-    } else if (id === 4) {
-      navigation.navigate('SocialGraph');
-    }
   };
 
   return (
@@ -140,6 +219,30 @@ export default function HomeScreen({ navigation }) {
       <TouchableOpacity style={styles.logoutButton} onPress={() => {}}>
         <Ionicons name="log-out-outline" size={30} color="#718096" />
       </TouchableOpacity>
+
+      <TouchableOpacity style={styles.inboxIcon} onPress={() => setShowDropdown(!showDropdown)}>
+        <Ionicons name="mail-outline" size={30} color="#560CCE" />
+        {unreadCount > 0 && (
+          <View style={styles.badge}>
+            <Text style={styles.badgeText}>{unreadCount}</Text>
+          </View>
+        )}
+      </TouchableOpacity>
+
+      {showDropdown && (
+        <View style={styles.dropdown}>
+          <FlatList
+            data={unreadMessages}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({ item }) => (
+              <TouchableOpacity onPress={() => handleNavigateToChat(item.from)}>
+                <Text style={styles.dropdownItem}>הודעה מ־{item.from}</Text>
+              </TouchableOpacity>
+            )}
+          />
+        </View>
+      )}
+
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.headerContainer}>
           <Text style={styles.greeting}>שלום לך</Text>
@@ -147,7 +250,7 @@ export default function HomeScreen({ navigation }) {
         </View>
 
         <View style={{ alignItems: 'center', marginBottom: 0 }}>
-        <Svg width={radius * 2} height={radius + 40}>
+          <Svg width={radius * 2} height={radius + 40}>
             <G rotation={-180} origin={`${radius}, ${radius}`}>
               {renderEmotionPie()}
               <Circle cx={radius} cy={radius} r={6} fill="#333" />
@@ -181,11 +284,23 @@ export default function HomeScreen({ navigation }) {
         </View>
 
         <View style={styles.categoriesContainer}>
-          {categories.map((category) => (
+          {[
+            { id: 1, title: 'צ׳אט בוט', image: require('../assets/chatbot.png'), description: 'שוחח עם הבוט שלנו', backgroundColor: '#FFF5F5' },
+            { id: 2, title: 'קהילה שיתופית', image: require('../assets/community.png'), description: 'הצטרף לקהילה שלנו', backgroundColor: '#f1e9f5' },
+            { id: 3, title: 'תוכן העשרה', image: require('../assets/contant.png'), description: 'גלה תוכן חדש ומעניין', backgroundColor: '#F7FAFC' },
+            { id: 4, title: 'מצא חבר', image: require('../assets/talkWithFriend.png'), description: 'גלה חברים חדשים', backgroundColor: '#FFF5F5' },
+            { id: 5, title: 'צאט', image: require('../assets/talkWithFriend.png'), description: 'צאט בין 2 יוזרים', backgroundColor: '#f1e9f5' },
+          ].map((category) => (
             <TouchableOpacity
-            key={category.id}
-            style={[styles.categoryCard, { backgroundColor: category.backgroundColor }]}
-            onPress={() => handleCategoryPress(category.id)}
+              key={category.id}
+              style={[styles.categoryCard, { backgroundColor: category.backgroundColor }]}
+              onPress={() => {
+                if (category.id === 1) navigation.navigate('ChatBotScreen');
+                else if (category.id === 2) navigation.navigate('CommunityScreen');
+                else if (category.id === 3) navigation.navigate('EnrichmentContent');
+                else if (category.id === 4) navigation.navigate('SocialGraph');
+                else if (category.id === 5) navigation.navigate('UserListScreen', { currentUser: currentUser.username });
+              }}
             >
               <View style={styles.imageContainer}>
                 <Image source={category.image} style={styles.categoryImage} resizeMode="contain" />
@@ -201,23 +316,3 @@ export default function HomeScreen({ navigation }) {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-  scrollContent: { flexGrow: 1, padding: 20 },
-  headerContainer: { alignItems: 'flex-end', marginBottom: 32, marginTop: 20, padding: 20 },
-  greeting: { fontSize: 32, fontWeight: 'bold', color: '#2D3748', marginBottom: 8 },
-  subtitle: { fontSize: 18, color: '#718096', textAlign: 'right' },
-  logoutButton: { position: 'absolute', top: 20, left: 20, zIndex: 1 },
-  quoteText: { fontSize: 16, fontWeight: '500', textAlign: 'center', marginTop: 12, lineHeight: 24 },
-  tipCard: { borderRadius: 15, padding: 20, marginBottom: 20, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 8, elevation: 3 },
-  tipTitle: { fontSize: 18, fontWeight: 'bold', marginBottom: 8, textAlign: 'right' },
-  tipText: { fontSize: 16, textAlign: 'right', lineHeight: 22 },
-  categoriesContainer: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', gap: 20 },
-  categoryCard: { width: cardWidth, borderRadius: 20, padding: 16, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.05, shadowRadius: 12, elevation: 3 },
-  imageContainer: { width: '100%', height: 120, marginBottom: 12, justifyContent: 'center', alignItems: 'center' },
-  categoryImage: { width: '80%', height: '80%' },
-  textContainer: {},
-  categoryTitle: { fontSize: 18, fontWeight: '700', color: '#2D3748', marginBottom: 4, textAlign: 'center' },
-  categoryDescription: { fontSize: 14, color: '#718096', textAlign: 'center', lineHeight: 20 },
-});

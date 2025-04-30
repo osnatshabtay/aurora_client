@@ -18,6 +18,8 @@ import {
   HomeScreenManager,
   UserApprovalScreen,
   PostApprovalScreen,
+  ChatScreen,
+  UserListScreen,
 } from './src/screens'
 
 const Stack = createStackNavigator()
@@ -45,6 +47,8 @@ export default function App() {
           <Stack.Screen name="ChatBotScreen" component={ChatBotScreen} />
           <Stack.Screen name="HomeScreenManager" component={HomeScreenManager}/>
           <Stack.Screen name="PostApprovalScreen" component={PostApprovalScreen}/>
+          <Stack.Screen name="ChatScreen" component={ChatScreen}/>
+          <Stack.Screen name="UserListScreen" component={UserListScreen}/>
 
         </Stack.Navigator>
       </NavigationContainer>
