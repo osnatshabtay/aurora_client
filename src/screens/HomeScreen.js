@@ -12,6 +12,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { Svg, Path, Circle, G, Text as SvgText } from 'react-native-svg';
 import { useSharedValue, withTiming } from 'react-native-reanimated';
+import { Avatar, Card, Button, Title, IconButton } from 'react-native-paper';
 
 const emotions = [
   { id: 1, name: "שמחה", color: "#FFD700", quote: "השמחה היא בחירה. בחרת נכון היום!", icon: "😊" },
@@ -24,11 +25,52 @@ const emotions = [
   { id: 8, name: "רוגע", color: "#87CEEB", quote: "הרוגע הוא מתנה שאתה נותן לעצמך. תיהנה ממנה.", icon: "🧘‍♀️" },
 ];
 
+const BottomBar = ({ currentTab, setCurrentTab, navigation }) => {
+  const tabs = [
+    { icon: 'home', label: 'בית', screen: 'HomeScreen' },
+    { icon: 'account-group', label: 'קהילה', screen: 'CommunityScreen' },
+    { icon: 'robot-outline', label: "צ'אט בוט", screen: 'ChatBotScreen' },
+    { icon: 'book-open-variant', label: 'תוכן העשרה', screen: 'EnrichmentContent' },
+    { icon: 'account-search', label: 'מצא חבר', screen: 'SocialGraph' },
+  ];
+
+  const handleTabPress = (label, screen) => {
+    setCurrentTab(label);
+    navigation.navigate(screen);
+  };
+
+  return (
+    <View style={styles.bottomBar}>
+      {tabs.map((tab, index) => (
+        <TouchableOpacity
+          key={index}
+          style={styles.tabItem}
+          onPress={() => handleTabPress(tab.label, tab.screen)}
+        >
+          <IconButton
+            icon={tab.icon}
+            size={24}
+            iconColor={currentTab === tab.label ? '#007BFF' : '#888'}
+          />
+          {currentTab === tab.label && (
+            <View style={styles.activeDot} />
+          )}
+          <Text style={[styles.tabLabel, currentTab === tab.label && styles.tabLabelActive]}>
+            {tab.label}
+          </Text>
+        </TouchableOpacity>
+      ))}
+    </View>
+  );
+};
+
+
 const { width } = Dimensions.get('window');
 const cardWidth = (width - 60) / 2;
 const radius = 180;
 
 export default function HomeScreen({ navigation }) {
+  const [currentTab, setCurrentTab] = useState('בית');
   const [selectedEmotionIndex, setSelectedEmotionIndex] = useState(0);
   const [darkMode, setDarkMode] = useState(false);
   const [dailyTip] = useState([
@@ -125,11 +167,11 @@ export default function HomeScreen({ navigation }) {
 
   const handleCategoryPress = (id) => {
     if (id === 1) {
-      navigation.navigate('ChatBotScreen');
+      navigation.navigate("צ'אט בוט");
     } else if (id === 2) {
-      navigation.navigate('CommunityScreen');
+      navigation.navigate('קהילה');
     } else if (id === 3) {
-      navigation.navigate('EnrichmentContent');
+      navigation.navigate('תוכן העשרה');
     } else if (id === 4) {
       navigation.navigate('SocialGraph');
     }
@@ -198,6 +240,9 @@ export default function HomeScreen({ navigation }) {
           ))}
         </View>
       </ScrollView>
+      
+      
+
     </SafeAreaView>
   );
 }
@@ -220,4 +265,25 @@ const styles = StyleSheet.create({
   textContainer: {},
   categoryTitle: { fontSize: 18, fontWeight: '700', color: '#2D3748', marginBottom: 4, textAlign: 'center' },
   categoryDescription: { fontSize: 14, color: '#718096', textAlign: 'center', lineHeight: 20 },
+    bottomBar: {
+    flexDirection: 'row-reverse',
+    justifyContent: 'space-around',
+    paddingVertical: 10,
+    borderTopWidth: 1,
+    borderColor: '#ccc',
+    backgroundColor: '#fff',
+  },
+  tabItem: {
+  alignItems: 'center',
+  justifyContent: 'center',
+  },
+  activeDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#007BFF',
+    marginTop: -6,
+    marginBottom: 4,
+  },
+
 });

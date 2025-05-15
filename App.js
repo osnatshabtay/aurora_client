@@ -1,8 +1,10 @@
-import React from 'react'
-import { Provider } from 'react-native-paper'
-import { NavigationContainer } from '@react-navigation/native'
-import { createStackNavigator } from '@react-navigation/stack'
-import { theme } from './src/core/theme'
+import React from 'react';
+import { Provider as PaperProvider } from 'react-native-paper';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { theme } from './src/core/theme';
+import MainTabs from './src/navigation/MainTabs';
+
 import {
   StartScreen,
   LoginScreen,
@@ -11,43 +13,38 @@ import {
   QuestionsScreen,
   RegulationsScreen,
   EnrichmentContent,
-  HomeScreen,
   CategoryContent,
-  CommunityScreen,
-  ChatBotScreen,
   HomeScreenManager,
   UserApprovalScreen,
   PostApprovalScreen,
-} from './src/screens'
+  OptinalHomeScreen,
+} from './src/screens';
 
-const Stack = createStackNavigator()
+const Stack = createStackNavigator();
 
 export default function App() {
   return (
-    <Provider theme={theme}>
+    <PaperProvider theme={theme}>
       <NavigationContainer>
-        <Stack.Navigator
-          initialRouteName="StartScreen"
-          screenOptions={{
-            headerShown: true,
-          }}
-        >
+        <Stack.Navigator initialRouteName="StartScreen" screenOptions={{ headerShown: false }}>
           <Stack.Screen name="StartScreen" component={StartScreen} />
           <Stack.Screen name="LoginScreen" component={LoginScreen} />
           <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
           <Stack.Screen name="RegulationsScreen" component={RegulationsScreen} />
           <Stack.Screen name="Dashboard" component={Dashboard} />
           <Stack.Screen name="QuestionsScreen" component={QuestionsScreen} />
-          <Stack.Screen name="EnrichmentContent" component={EnrichmentContent}/>
-          <Stack.Screen name="HomeScreen" component={HomeScreen}/>
-          <Stack.Screen name="CategoryContent" component={CategoryContent}/>
-          <Stack.Screen name="CommunityScreen" component={CommunityScreen}/>
-          <Stack.Screen name="ChatBotScreen" component={ChatBotScreen} />
-          <Stack.Screen name="HomeScreenManager" component={HomeScreenManager}/>
-          <Stack.Screen name="PostApprovalScreen" component={PostApprovalScreen}/>
+          
+          {/* כאן נכנס הסרגל התחתון */}
+          <Stack.Screen name="MainTabs" component={MainTabs} />
 
+          {/* שאר מסכים שנפתחים מתוך Tabs */}
+          <Stack.Screen name="EnrichmentContent" component={EnrichmentContent} />
+          <Stack.Screen name="CategoryContent" component={CategoryContent} />
+          <Stack.Screen name="HomeScreenManager" component={HomeScreenManager} />
+          <Stack.Screen name="PostApprovalScreen" component={PostApprovalScreen} />
+          <Stack.Screen name="OptinalHomeScreen" component={OptinalHomeScreen} />
         </Stack.Navigator>
       </NavigationContainer>
-    </Provider>
-  )
+    </PaperProvider>
+  );
 }
