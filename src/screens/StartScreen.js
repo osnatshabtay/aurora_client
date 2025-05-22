@@ -25,21 +25,6 @@ export default function StartScreen({ navigation }) {
         הרשמה
       </Button>
 
-      <Button
-        mode="outlined"
-        onPress={() => navigation.navigate('OptinalHomeScreen')}
-      >
-        דף בית אופציונאלי
-      </Button>
-
-            <Button
-        mode="outlined"
-        onPress={() => navigation.navigate('PersonalizedContentScreen')}
-      >
-תכנים מותאמים אישית
-      </Button>
-      
-
     </Background>
   )
 }

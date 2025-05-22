@@ -36,7 +36,6 @@ export default function App() {
           <Stack.Screen name="RegulationsScreen" component={RegulationsScreen} />
           <Stack.Screen name="Dashboard" component={Dashboard} />
           <Stack.Screen name="QuestionsScreen" component={QuestionsScreen} />
-          <Stack.Screen name="PersonalizedContentScreen" component={PersonalizedContentScreen} />
 
           {/* כאן נכנס הסרגל התחתון */}
           <Stack.Screen name="MainTabs" component={MainTabs} />
@@ -46,7 +45,6 @@ export default function App() {
           <Stack.Screen name="CategoryContent" component={CategoryContent} />
           <Stack.Screen name="HomeScreenManager" component={HomeScreenManager} />
           <Stack.Screen name="PostApprovalScreen" component={PostApprovalScreen} />
-          <Stack.Screen name="OptinalHomeScreen" component={OptinalHomeScreen} />
           <Stack.Screen name="MeditationPlayerScreen" component={MeditationPlayerScreen} />
           <Stack.Screen name="MeditationSelectionScreen" component={MeditationSelectionScreen} />
 
