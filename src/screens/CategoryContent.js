@@ -1,12 +1,18 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, Linking, TouchableOpacity } from 'react-native';
 import { WebView } from 'react-native-webview';
+import BackButton from '../components/BackButton'; 
+import { useNavigation } from '@react-navigation/native';
 
 export default function CategoryContent({ route }) {
   const { titleHe, titleEn, icon, content } = route.params;
+  const navigation = useNavigation();
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      
+      <BackButton goBack={navigation.goBack} />
+      
       <Text style={styles.icon}>{icon}</Text>
       <Text style={styles.title}>{titleHe}</Text>
       <Text style={styles.subtitle}>{titleEn}</Text>

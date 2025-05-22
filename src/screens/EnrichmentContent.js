@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FAF9F6',  
-    paddingVertical: 40,
+    paddingVertical: 55,
     paddingHorizontal: 12,
     direction: 'rtl', 
     fontFamily: 'Rubik', 
@@ -145,9 +145,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 6,
     elevation: 5,
-    height: 400, 
+    height: 370, 
     direction: 'rtl', 
-    justifyContent: 'space-between',
   },
   cardHeader: {
     flexDirection: 'row-reverse',
@@ -162,7 +161,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#37474F',
     textAlign: 'right', 
-    fontFamily: 'Rubik',  
+    fontFamily: 'Rubik', 
+    direction:'ltr' 
   },
   iconContainer: {
     backgroundColor: '#FFFFFF',
@@ -192,7 +192,6 @@ const styles = StyleSheet.create({
     height: 200,
     borderRadius: 15,
     overflow: 'hidden',
-    marginTop: 0,
   },
   image: {
     width: '100%',
