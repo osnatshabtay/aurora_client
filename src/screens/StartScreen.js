@@ -31,6 +31,13 @@ export default function StartScreen({ navigation }) {
       >
         דף בית אופציונאלי
       </Button>
+
+            <Button
+        mode="outlined"
+        onPress={() => navigation.navigate('PersonalizedContentScreen')}
+      >
+תכנים מותאמים אישית
+      </Button>
       
 
     </Background>

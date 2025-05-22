@@ -18,6 +18,9 @@ import {
   UserApprovalScreen,
   PostApprovalScreen,
   OptinalHomeScreen,
+  PersonalizedContentScreen,
+  MeditationPlayerScreen,
+  MeditationSelectionScreen,
 } from './src/screens';
 
 const Stack = createStackNavigator();
@@ -33,7 +36,10 @@ export default function App() {
           <Stack.Screen name="RegulationsScreen" component={RegulationsScreen} />
           <Stack.Screen name="Dashboard" component={Dashboard} />
           <Stack.Screen name="QuestionsScreen" component={QuestionsScreen} />
-          
+          <Stack.Screen name="PersonalizedContentScreen" component={PersonalizedContentScreen} />
+          <Stack.Screen name="MeditationPlayerScreen" component={MeditationPlayerScreen} />
+          <Stack.Screen name="MeditationSelectionScreen" component={MeditationSelectionScreen} />
+
           {/* כאן נכנס הסרגל התחתון */}
           <Stack.Screen name="MainTabs" component={MainTabs} />
 
@@ -43,6 +49,8 @@ export default function App() {
           <Stack.Screen name="HomeScreenManager" component={HomeScreenManager} />
           <Stack.Screen name="PostApprovalScreen" component={PostApprovalScreen} />
           <Stack.Screen name="OptinalHomeScreen" component={OptinalHomeScreen} />
+
+          
         </Stack.Navigator>
       </NavigationContainer>
     </PaperProvider>
