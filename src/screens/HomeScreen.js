@@ -173,7 +173,7 @@ export default function HomeScreen({ navigation }) {
     } else if (id === 3) {
       navigation.navigate('תוכן העשרה');
     } else if (id === 4) {
-      navigation.navigate('SocialGraph');
+      navigation.navigate("מצא חבר");
     }
   };
 

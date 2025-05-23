@@ -6,7 +6,7 @@ import HomeScreen from '../screens/HomeScreen';
 import ChatBotScreen from '../screens/ChatBotScreen';
 import CommunityScreen from '../screens/CommunityScreen';
 import EnrichmentContent from '../screens/EnrichmentContent';
-// import SocialGraph from '../screens/SocialGraph';
+import SocialGraph from '../screens/SocialGraphScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -47,6 +47,7 @@ export default function MainTabs() {
   <Tab.Screen name="צ'אט בוט" component={ChatBotScreen} />
   <Tab.Screen name="קהילה" component={CommunityScreen} />
   <Tab.Screen name="בית" component={HomeScreen} />
+  <Tab.Screen name="מצא חבר" component={SocialGraph} />
 </Tab.Navigator>
 
   );
