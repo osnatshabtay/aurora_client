@@ -25,9 +25,9 @@ export default function HomeScreenManager({ navigation }) {
     },
     {
       id: 2,
-      title: 'צ׳אט בוט',
+      title: 'צ׳אט',
       image: require('../assets/chatbot.png'),
-      description: 'שוחח עם הבוט שלנו',
+      description: 'שוחח עם הצ׳אט שלנו',
       backgroundColor: '#FFF5F5',
     },
     {
