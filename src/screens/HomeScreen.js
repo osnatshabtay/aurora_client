@@ -4,15 +4,16 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  SafeAreaView,
   ScrollView,
   Image,
   Dimensions,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Svg, Path, Circle, G, Text as SvgText } from 'react-native-svg';
 import { useSharedValue, withTiming } from 'react-native-reanimated';
 import { Avatar, Card, Button, Title, IconButton } from 'react-native-paper';
+import * as SecureStore from 'expo-secure-store';
 
 const emotions = [
   { id: 1, name: "שמחה", color: "#FFD700", quote: "השמחה היא בחירה. בחרת נכון היום!", icon: "😊" },
@@ -177,9 +178,23 @@ export default function HomeScreen({ navigation }) {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      console.log("here")
+      await SecureStore.deleteItemAsync('access_token');
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'LoginScreen' }],
+      });
+    } catch (error) {
+      console.error('Logout failed:', error);
+      alert('התרחשה שגיאה ביציאה מהמערכת');
+    }
+  };
+
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}> 
-      <TouchableOpacity style={styles.logoutButton} onPress={() => {}}>
+      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
         <Ionicons name="log-out-outline" size={30} color="#718096" />
       </TouchableOpacity>
       <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -253,7 +268,15 @@ const styles = StyleSheet.create({
   headerContainer: { alignItems: 'flex-end', marginBottom: 32, marginTop: 20, padding: 20 },
   greeting: { fontSize: 32, fontWeight: 'bold', color: '#2D3748', marginBottom: 8 },
   subtitle: { fontSize: 18, color: '#718096', textAlign: 'right' },
-  logoutButton: { position: 'absolute', top: 20, left: 20, zIndex: 1 },
+  logoutButton: {
+    position: 'absolute',
+    top: 20,
+    left: 20,
+    zIndex: 999,
+    elevation: 10,
+    backgroundColor: 'transparent', 
+    padding: 10, 
+  },
   quoteText: { fontSize: 16, fontWeight: '500', textAlign: 'center', marginTop: 12, lineHeight: 24 },
   tipCard: { borderRadius: 15, padding: 20, marginBottom: 20, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 8, elevation: 3 },
   tipTitle: { fontSize: 18, fontWeight: 'bold', marginBottom: 8, textAlign: 'right' },
