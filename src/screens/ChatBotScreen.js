@@ -74,7 +74,7 @@ export default function ChatBotScreen() {
     }
 
     try {
-        const result = await api('/chatbot/chat_with_history', {
+        const result = await api('/chatbot/rag_chat', {
         method: 'POST',
         body: JSON.stringify({ message: inputText }),
         });

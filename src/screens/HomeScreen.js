@@ -159,7 +159,7 @@ export default function HomeScreen({ navigation }) {
   };
 
   const categories = [
-    { id: 1, title: 'צ׳אט בוט', image: require('../assets/chatbot.png'), description: 'שוחח עם הבוט שלנו', backgroundColor: '#FFF5F5' },
+    { id: 1, title: 'צ׳אט', image: require('../assets/chatbot.png'), description: 'שוחח עם הצ׳אט שלנו', backgroundColor: '#FFF5F5' },
     { id: 2, title: 'קהילה שיתופית', image: require('../assets/community.png'), description: 'הצטרף לקהילה שלנו', backgroundColor: '#f1e9f5' },
     { id: 3, title: 'תוכן העשרה', image: require('../assets/contant.png'), description: 'גלה תוכן חדש ומעניין', backgroundColor: '#F7FAFC' },
     { id: 4, title: 'מצא חבר', image: require('../assets/talkWithFriend.png'), description: 'גלה חברים חדשים', backgroundColor: '#FFF5F5' },
