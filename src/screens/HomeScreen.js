@@ -15,7 +15,6 @@ import { Svg, Path, Circle, G, Text as SvgText } from 'react-native-svg';
 import { useSharedValue, withTiming } from 'react-native-reanimated';
 import { Avatar, Card, Button, Title, IconButton } from 'react-native-paper';
 import * as SecureStore from 'expo-secure-store';
-import * as SecureStore from 'expo-secure-store';
 import { URL } from '@env';
 
 const emotions = [
@@ -254,16 +253,6 @@ export default function HomeScreen({ navigation }) {
         </G>
       );
     });
-  };
-
-  const selectedEmotion = emotions[selectedEmotionIndex];
-
-  const theme = {
-    background: darkMode ? "#121212" : selectedEmotion.color + '15',
-    card: darkMode ? "#1E1E1E" : "#FFFFFF",
-    text: darkMode ? "#E1E1E1" : "#333333",
-    subtext: darkMode ? "#AAAAAA" : "#666666",
-    accent: "#6A0DAD",
   };
 
   const categories = [
