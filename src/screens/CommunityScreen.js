@@ -9,13 +9,20 @@ import {
   Alert,
   Image,
   ActivityIndicator,
+  FlatList,
+  Dimensions,
 } from 'react-native';
 import { Card, CardHeader, CardContent, CardFooter } from '../components/Card';
-import { MessageCircle, HeartOutline, HeartFilled } from '../components/Icon';
+import { MessageCircle, HeartOutline, HeartFilled, FilterIcon } from '../components/Icon';
 import { imageMapping } from '../helpers/avatar';
 import { theme } from '../core/theme'; 
 import { URL } from '@env';
 import { api } from '../api';
+import * as ImagePicker from 'expo-image-picker';
+import { moodOptions } from '../helpers/moods';
+
+const screenWidth = Dimensions.get('window').width;
+
 
 
 const Avatar = ({ size = 40, uri }) => {
@@ -31,6 +38,28 @@ const Avatar = ({ size = 40, uri }) => {
 };
 
 export default function CommunityScreen() {
+  const [postImage, setPostImage] = useState(null);
+const [selectedMood, setSelectedMood] = useState(null);
+
+const pickImage = async () => {
+  const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+  if (permissionResult.status !== 'granted') {
+    alert('נדרש אישור לגשת לגלריה כדי להוסיף תמונה לפוסט');
+    return;
+  }
+
+  const result = await ImagePicker.launchImageLibraryAsync({
+    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    allowsEditing: true,
+    quality: 0.7,
+  });
+
+  if (!result.canceled) {
+    setPostImage(result.assets[0].uri);
+  }
+};
+
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [newPostText, setNewPostText] = useState('');
@@ -73,18 +102,39 @@ export default function CommunityScreen() {
         method: 'POST',
         body: JSON.stringify({
           text: newPostText.trim(),
+          mood: selectedMood,
         }),
       });
   
       Alert.alert('הפוסט נשלח לאישור מנהל', 'לאחר אישורו, הוא יתפרסם בקהילה.');
       fetchPosts();
       setNewPostText('');
-  
+      setSelectedMood(null);
     } catch (error) {
       console.error('Error creating post:', error.message);
       Alert.alert('Error', 'הפוסט לא נוצר בהצלחה');
     }
   };
+
+  const MoodSelector = () => (
+  <View style={{ marginTop: 8 }}>
+    <Text style={{ fontSize: 14, marginBottom: 4 }}> איך היית מתאר את מצב הרוח שלך?</Text>
+    <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
+      {moodOptions.map((mood) => (
+        <TouchableOpacity
+          key={mood.label}
+          onPress={() => setSelectedMood(mood.label)}
+          style={{
+            padding: 8,
+            borderRadius: 12,
+            backgroundColor: selectedMood === mood.label ? '#A0D2DB' : '#F0F0F0',
+          }}>
+          <Text style={{ fontSize: 16 }}>{mood.icon}</Text>
+        </TouchableOpacity>
+      ))}
+    </View>
+  </View>
+);
   
   const handleLike = async (postId) => {
     try {
@@ -164,38 +214,112 @@ export default function CommunityScreen() {
     );
   };
 
+  const [filterMood, setFilterMood] = useState(null);
+
+const filteredPosts = filterMood
+  ? posts.filter((post) => post.mood === filterMood)
+  : posts;
+
+const MoodFilter = () => (
+  <View style={styles.moodFilterWrapper}>
+    <View style={styles.moodFilterTitleRow}>
+      <FilterIcon />
+      <Text style={styles.moodFilterTitle}>סנן לפי מצב רוח</Text>
+    </View>
+    <View style={styles.moodFilterGrid}>
+      {moodOptions.map((mood) => (
+        <TouchableOpacity
+          key={mood.label}
+          onPress={() => setFilterMood(mood.label === filterMood ? null : mood.label)}
+          style={[
+            styles.moodFilterButton,
+            { backgroundColor: mood.label === filterMood ? '#6EC6CA' : '#EEE' },
+          ]}
+        >
+          <Text style={styles.moodFilterText}>{mood.icon} {mood.label}</Text>
+        </TouchableOpacity>
+      ))}
+    </View>
+  </View>
+);
+
+
+
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollArea}>
         <View style={styles.contentContainer}>
+    
+
           {/* Post Creation */}
           <Card>
-            <CardHeader style={[styles.cardHeader, styles.postCreationHeader]}>
+            <CardHeader style={styles.createPostContainer}>
               <Avatar size={50} uri={currentUser.selectedImage} />
-              <TextInput
-                placeholder="What's New?"
-                style={styles.input}
-                multiline={true}
-                value={newPostText}
-                onChangeText={setNewPostText}
-              />
-              <TouchableOpacity style={styles.addPostButton} onPress={createPost}>
-                <Text style={styles.addPostText}>Post</Text>
-              </TouchableOpacity>
+
+              <View style={styles.textAreaContainer}>
+                <TextInput
+                  placeholder="שתף, יתייעץ או כתוב לקהילה"
+                  style={styles.createPostInput}
+                  multiline
+                  value={newPostText}
+                  onChangeText={setNewPostText}
+                  textAlign="right"
+                />
+
+                {postImage && (
+                  <Image source={{ uri: postImage }} style={{ width: '100%', height: 200, borderRadius: 10 }} />
+                )}
+
+                <View style={styles.postActions}>
+                  {/* <TouchableOpacity onPress={pickImage}>
+                    <Text style={styles.postActionText}>📷 תמונה</Text>
+                  </TouchableOpacity> */}
+
+                  {postImage && (
+                    <Image
+                      source={{ uri: postImage }}
+                      style={{
+                        width: '100%',
+                        height: 200,
+                        borderRadius: 10,
+                        marginTop: 8,
+                      }}
+                    />
+                  )}
+
+                </View>
+  <MoodSelector />
+
+              <View style={{ alignItems: 'flex-start' , marginTop: 3  , marginBottom:3}}>
+                <TouchableOpacity style={styles.postSubmitButton} onPress={createPost}>
+                  <Text style={styles.postSubmitText}>פרסם</Text>
+                </TouchableOpacity>
+              </View>
+
+              </View>
             </CardHeader>
           </Card>
+
+          <MoodFilter />
+
+
 
           {/* Loading Spinner */}
           {loading && <ActivityIndicator size="large" color="#560CCE" />}
 
           {/* Display Posts */}
           {!loading &&
-            posts.map((post, index) => (
+            filteredPosts.map((post, index) => (
               <Card key={index}>
                 <CardHeader style={styles.cardHeader}>
-                  <View style={styles.userContainer}>
+                  <View style={styles.postHeaderRow}>
                     <Avatar size={40} uri={post.user_image} />
-                    <Text style={styles.userName}>{post.user}</Text>
+                    <View style={styles.userInfoContainer}>
+                      <Text style={styles.userName}>{post.user}</Text>
+                      {post.mood && (
+                        <Text style={styles.userMood}>{moodOptions.find(m => m.label === post.mood)?.icon}</Text>
+                      )}
+                    </View>
                   </View>
                 </CardHeader>
                 <CardContent style={styles.cardContent}>
@@ -255,7 +379,8 @@ export default function CommunityScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#EAF4F4',
+    direction:'rtl',
   },
   scrollArea: {
     flex: 1,
@@ -263,6 +388,7 @@ const styles = StyleSheet.create({
   contentContainer: {
     padding: 16,
     gap: 16,
+    textAlign: 'right',
   },
   cardHeader: {
     flexDirection: 'row',
@@ -281,33 +407,43 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#333',
     width: 230,
+    textAlign: 'right',
   },
-  addPostButton: {
-    marginLeft: 8,
-    backgroundColor: theme.colors.primary,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  addPostText: {
-    color: '#fff',
-    fontWeight: '600',
-  },
-  userContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-    gap: 8,
-  },
-  userName: {
-    fontWeight: '600',
-    fontSize: 16,
-  },
-  cardContent: {
-    marginVertical: 16,
-  },
+addPostButton: {
+  backgroundColor: theme.colors.primary,
+  paddingVertical: 10,
+  paddingHorizontal: 20,
+  borderRadius: 25,
+  elevation: 2,
+},
+addPostText: {
+  color: 'white',
+  fontWeight: 'bold',
+  fontSize: 14,
+},
+
+userContainer: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  gap: 12,
+  paddingVertical: 4,
+},
+userName: {
+  fontWeight: '600',
+  fontSize: 16,
+  color: '#003F5C',
+  textAlign: 'right',
+},
+
+
+cardContent: {
+  marginVertical: 12,
+  paddingHorizontal: 4,
+  fontSize: 15,
+  lineHeight: 22,
+  color: '#333',
+},
+
   cardFooter: {
     flexDirection: 'column',
     gap: 8,
@@ -331,36 +467,153 @@ const styles = StyleSheet.create({
     backgroundColor: '#ddd',
   },
   commentBox: {
-    marginTop: 10,
-    padding: 10,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-  },
-  commentInput: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 10,
-  },
+  marginTop: 10,
+  backgroundColor: '#FFFFFF',
+  borderWidth: 1,
+  borderColor: '#A0D2DB',
+  borderRadius: 12,
+  padding: 10,
+},
+commentInput: {
+  borderWidth: 1,
+  borderColor: '#CCE5E5',
+  borderRadius: 20,
+  padding: 10,
+  backgroundColor: '#FAFAFA',
+  marginBottom: 10,
+  textAlign: 'right',
+},
+
   postCommentButton: {
     color: '#007BFF',
     textAlign: 'center',
   },
   commentItem: {
-    marginTop: 8,
-    padding: 8,
-    backgroundColor: '#f9f9f9',
-    borderRadius: 5,
+  marginTop: 8,
+  padding: 10,
+  backgroundColor: '#F0F7F7',
+  borderRadius: 10,
+  borderWidth: 1,
+  borderColor: '#DCEEEE',
+},
+commentUser: {
+  fontWeight: 'bold',
+  fontSize: 14,
+  color: '#2D6A6A',
+},
+commentText: {
+  marginTop: 4,
+  fontSize: 14,
+  color: '#333',
+},
+createPostContainer: {
+  flexDirection: 'row',
+  alignItems: 'flex-start',
+  gap: 12,
+  paddingBottom: 8,
+},
+
+textAreaContainer: {
+  flex: 1,
+  flexDirection: 'column',
+  gap: 8,
+},
+
+createPostInput: {
+  backgroundColor: '#F2F2F2',
+  borderRadius: 12,
+  padding: 12,
+  fontSize: 15,
+  minHeight: 60,
+  textAlignVertical: 'top',
+  color: '#333',
+},
+
+postActions: {
+  flexDirection: 'row',
+  justifyContent: 'flex-start',
+  gap: 16,
+},
+
+postActionText: {
+  fontSize: 14,
+  color: '#007BFF',
+},
+
+postSubmitButton: {
+  backgroundColor: theme.colors.primary,
+  paddingVertical: 8,
+  paddingHorizontal: 20,
+  borderRadius: 20,
+  marginTop: 4,
+
+  elevation: 2,
+shadowColor: '#000',
+shadowOffset: { width: 0, height: 2 },
+shadowOpacity: 0.15,
+shadowRadius: 3,
+
+},
+
+postSubmitText: {
+  color: 'white',
+  fontSize: 14,
+  fontWeight: '600',
+},
+
+ moodFilterWrapper: {
+    marginBottom: 16,
   },
-  commentUser: {
-    fontWeight: '600',
+  moodFilterTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: 6,
+    paddingHorizontal: 12,
   },
-  commentText: {
-    marginTop: 4,
+  moodFilterTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  moodFilterContainer: {
+    flexDirection: 'row',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    gap: 10,
+    minWidth: screenWidth,
+  },
+  moodFilterButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 20,
+  },
+  moodFilterText: {
     fontSize: 14,
+    color: '#003F5C',
   },
+  postHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  userInfoContainer: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    marginRight: 8,
+  },
+  userMood: {
+    fontSize: 16,
+    color: '#666',
+    marginTop: 2,
+  },
+  moodFilterGrid: {
+  flexDirection: 'row',
+  flexWrap: 'wrap',
+  gap: 8,
+  justifyContent: 'flex-start',
+  paddingHorizontal: 12,
+},
 
 
 });

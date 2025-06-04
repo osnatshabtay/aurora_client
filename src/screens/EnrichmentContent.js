@@ -5,6 +5,7 @@ import Background from '../components/Background';
 import { categories } from '../helpers/category';
 import { URL } from '@env';
 import { api } from '../api';
+import { AntDesign } from '@expo/vector-icons';
 
 
 export default function EnrichmentContent({ navigation }) {
@@ -79,6 +80,26 @@ export default function EnrichmentContent({ navigation }) {
           </TouchableOpacity>
         ))}
       </ScrollView>
+
+
+      <View style={styles.breathingSection}>
+          <TouchableOpacity
+          style={styles.breathingCard}
+          onPress={() => navigation.navigate('MeditationSelectionScreen')}
+          >
+          <View style={styles.playButtonWrapper}>
+            <View style={styles.playButtonCircle}>
+              <AntDesign name="play" size={30} color="#4f684e" />
+            </View>
+          </View>
+          <Text style={styles.breathingTitle}>קחי לך רגע לנשום ✨</Text>
+          <Text style={styles.breathingSubtitle}>הירגעי ושחררי מתחים</Text>
+          <Text style={styles.breathingTip}>הכניסי אוויר עמוק דרך האף עד הבטן ✨</Text>
+          <Text style={styles.breathingTip}>לחצי ובחרי לך מדיטציה להאזנה</Text>
+        </TouchableOpacity>
+      </View>
+
+
     </View>    
   );
 }
@@ -88,7 +109,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FAF9F6',  
-    paddingVertical: 16,
+    paddingVertical: 55,
     paddingHorizontal: 12,
     direction: 'rtl', 
     fontFamily: 'Rubik', 
@@ -124,9 +145,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 6,
     elevation: 5,
-    height: 400, 
+    height: 370, 
     direction: 'rtl', 
-    justifyContent: 'space-between',
   },
   cardHeader: {
     flexDirection: 'row-reverse',
@@ -141,7 +161,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#37474F',
     textAlign: 'right', 
-    fontFamily: 'Rubik',  
+    fontFamily: 'Rubik', 
+    direction:'ltr' 
   },
   iconContainer: {
     backgroundColor: '#FFFFFF',
@@ -171,11 +192,59 @@ const styles = StyleSheet.create({
     height: 200,
     borderRadius: 15,
     overflow: 'hidden',
-    marginTop: 0,
   },
   image: {
     width: '100%',
     height: '100%',
     resizeMode: 'cover',
+  },
+  breathingSection: {
+    paddingHorizontal: 20,
+  },
+  breathingCard: {
+    backgroundColor: '#eaf0e6',
+    borderRadius: 24,
+    padding: 24,
+    alignItems: 'center',
+  },
+  playButtonWrapper: {
+    marginBottom: 16,
+  },
+  playButtonCircle: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: '#d1e2c4',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  breathingTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    color: '#2f4f4f',
+  },
+  breathingSubtitle: {
+    fontSize: 14,
+    color: '#4f684e',
+    marginBottom: 10,
+  },
+  breathingTip: {
+    fontSize: 13,
+    color: '#4f684e',
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  durationBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#dce9d0',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+  },
+  durationText: {
+    fontSize: 13,
+    color: '#4f684e',
   },
 });

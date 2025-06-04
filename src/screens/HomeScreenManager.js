@@ -4,11 +4,12 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  SafeAreaView,
   ScrollView,
   Image,
   Dimensions,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
 import { Ionicons } from '@expo/vector-icons';
 
 const { width } = Dimensions.get('window');
@@ -25,9 +26,9 @@ export default function HomeScreenManager({ navigation }) {
     },
     {
       id: 2,
-      title: 'צ׳אט בוט',
+      title: 'צ׳אט',
       image: require('../assets/chatbot.png'),
-      description: 'שוחח עם הבוט שלנו',
+      description: 'שוחח עם הצ׳אט שלנו',
       backgroundColor: '#FFF5F5',
     },
     {
@@ -58,9 +59,24 @@ export default function HomeScreenManager({ navigation }) {
     }
   };
 
+    const handleLogout = async () => {
+      try {
+        console.log("here")
+        await SecureStore.deleteItemAsync('access_token');
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'LoginScreen' }],
+        });
+      } catch (error) {
+        console.error('Logout failed:', error);
+        alert('התרחשה שגיאה ביציאה מהמערכת');
+      }
+    };
+  
+
   return (
     <SafeAreaView style={styles.container}>
-      <TouchableOpacity style={styles.logoutButton} onPress={() => {}}>
+      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
         <Ionicons name="log-out-outline" size={30} color="#718096" />
       </TouchableOpacity>
       <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -143,6 +159,16 @@ const styles = StyleSheet.create({
     shadowRadius: 12,
     elevation: 3,
   },
+  logoutButton: {
+    position: 'absolute',
+    top: 20,
+    left: 20,
+    zIndex: 999,
+    elevation: 10,
+    backgroundColor: 'transparent', 
+    padding: 10, 
+  },
+
   imageContainer: {
     width: '100%',
     height: 120,
@@ -168,11 +194,5 @@ const styles = StyleSheet.create({
     color: '#718096',
     textAlign: 'center',
     lineHeight: 20,
-  },
-  logoutButton: {
-    position: 'absolute',
-    top: 20,
-    left: 20,
-    zIndex: 1,
   },
 });

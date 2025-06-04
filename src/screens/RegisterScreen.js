@@ -11,9 +11,9 @@ import BackButton from '../components/BackButton'
 import { theme } from '../core/theme'
 import { passwordValidator } from '../helpers/passwordValidator'
 import { nameValidator } from '../helpers/nameValidator'
+import { api } from '../api';
 import { URL } from '@env';
 import * as SecureStore from 'expo-secure-store';
-
 
 
 export default function RegisterScreen({ navigation, route}) {

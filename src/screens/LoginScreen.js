@@ -42,7 +42,7 @@ export default function LoginScreen({ navigation }) {
       console.log('Server response:', result);
 
       await SecureStore.setItemAsync('access_token', result.access_token);
-      
+            
       if (result.is_admin) {
         navigation.reset({
           index: 0,
@@ -51,9 +51,10 @@ export default function LoginScreen({ navigation }) {
       } else {
         navigation.reset({
           index: 0,
-          routes: [{ name: 'HomeScreen' }],
+          routes: [{ name: 'MainTabs' }],
         });
       }
+
       
     } catch (error) {
       console.error('Error during log in:', error.message);
@@ -122,7 +123,3 @@ const styles = StyleSheet.create({
     color: theme.colors.primary,
   },
 })
-
-
-
-

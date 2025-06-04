@@ -19,25 +19,32 @@ const CardFooter = ({ children, style }) => {
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: 8,
-    elevation: 2,
+    borderRadius: 16,
+    elevation: 3,
     padding: 16,
-    backgroundColor: '#fff',
-    margin: 10,
+    backgroundColor: '#FFFFFF',
+    marginVertical: 8,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 6,
   },
   header: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
     paddingBottom: 8,
+    marginBottom: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E0E0E0',
   },
   content: {
     paddingVertical: 10,
   },
   footer: {
-    borderTopWidth: 1,
-    borderTopColor: '#ccc',
     paddingTop: 8,
+    marginTop: 8,
+    borderTopWidth: 1,
+    borderTopColor: '#E0E0E0',
   },
 });
+
 
 export { Card, CardHeader, CardContent, CardFooter };

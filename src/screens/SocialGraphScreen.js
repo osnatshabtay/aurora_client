@@ -1,0 +1,117 @@
+import React, { useEffect, useState } from 'react';
+import {
+  View,
+  Text,
+  FlatList,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  SafeAreaView,
+} from 'react-native';
+import { getAvatarImage } from '../helpers/avatar';
+import { useNavigation } from '@react-navigation/native';
+import { api } from '../api';
+
+export default function SocialGraphScreen() {
+  const [users, setUsers] = useState([]);
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    const fetchRecommendations = async () => {
+      try {
+        const res = await api('/users/recommendations');
+        setUsers(res.recommended_users);
+      } catch (err) {
+        console.error('Failed to fetch recommendations:', err.message || err);
+      }
+    };
+    fetchRecommendations();
+  }, []);
+
+  const renderItem = ({ item }) => (
+    <TouchableOpacity
+      style={styles.card}
+      onPress={() => navigation.navigate('ChatScreen', { recipient: item.username })}
+      activeOpacity={0.8}
+    >
+      <Image source={getAvatarImage(item.selectedImage)} style={styles.avatar} />
+      <Text style={styles.username}>{item.username}</Text>
+    </TouchableOpacity>
+  );
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <View style={styles.headerWrapper}>
+        <Text style={styles.title}>הכר חבר</Text>
+        <Text style={styles.subtitle}>
+          המשתמשים שמוצעים לך כאן משתפים איתך מאפיינים דומים, התמודדויות מורכבות או תחומי עניין משותפים. 
+          הם נבחרו עבורך באופן אישי כדי להציע לך קשרים משמעותיים יותר בקהילה.
+        </Text>
+      </View>
+
+      <FlatList
+        data={users}
+        keyExtractor={(item) => item.username}
+        renderItem={renderItem}
+        numColumns={2}
+        columnWrapperStyle={styles.row}
+        contentContainerStyle={styles.listContent}
+        showsVerticalScrollIndicator={false}
+      />
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#EAF4F4',
+    paddingHorizontal: 16,
+  },
+  headerWrapper: {
+    paddingTop: 48,
+    marginBottom: 24,
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    color: '#003F5C',
+    marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 16,
+    textAlign: 'center',
+    color: '#444',
+    paddingHorizontal: 12,
+    lineHeight: 24,
+  },
+  listContent: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingBottom: 40,
+  },
+  row: {
+    justifyContent: 'space-around',
+    marginBottom: 32,
+  },
+  card: {
+    alignItems: 'center',
+    width: '40%',
+  },
+  avatar: {
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    marginBottom: 8,
+    borderColor: '#ddd',
+    borderWidth: 1,
+  },
+  username: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#2D3748',
+    textAlign: 'center',
+  },
+});

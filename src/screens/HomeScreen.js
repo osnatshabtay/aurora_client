@@ -4,15 +4,17 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  SafeAreaView,
   ScrollView,
   Image,
   Dimensions,
   FlatList,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Svg, Path, Circle, G, Text as SvgText } from 'react-native-svg';
 import { useSharedValue, withTiming } from 'react-native-reanimated';
+import { Avatar, Card, Button, Title, IconButton } from 'react-native-paper';
+import * as SecureStore from 'expo-secure-store';
 import * as SecureStore from 'expo-secure-store';
 import { URL } from '@env';
 
@@ -27,13 +29,53 @@ const emotions = [
   { id: 8, name: "רוגע", color: "#87CEEB", quote: "הרוגע הוא מתנה שאתה נותן לעצמך. תיהנה ממנה.", icon: "🧘‍♀️" },
 ];
 
+const BottomBar = ({ currentTab, setCurrentTab, navigation }) => {
+  const tabs = [
+    { icon: 'home', label: 'בית', screen: 'HomeScreen' },
+    { icon: 'account-group', label: 'קהילה', screen: 'CommunityScreen' },
+    { icon: 'robot-outline', label: "צ'אט בוט", screen: 'ChatBotScreen' },
+    { icon: 'book-open-variant', label: 'תוכן העשרה', screen: 'EnrichmentContent' },
+    { icon: 'account-search', label: 'מצא חבר', screen: 'SocialGraph' },
+  ];
+
+  const handleTabPress = (label, screen) => {
+    setCurrentTab(label);
+    navigation.navigate(screen);
+  };
+
+  return (
+    <View style={styles.bottomBar}>
+      {tabs.map((tab, index) => (
+        <TouchableOpacity
+          key={index}
+          style={styles.tabItem}
+          onPress={() => handleTabPress(tab.label, tab.screen)}
+        >
+          <IconButton
+            icon={tab.icon}
+            size={24}
+            iconColor={currentTab === tab.label ? '#007BFF' : '#888'}
+          />
+          {currentTab === tab.label && (
+            <View style={styles.activeDot} />
+          )}
+          <Text style={[styles.tabLabel, currentTab === tab.label && styles.tabLabelActive]}>
+            {tab.label}
+          </Text>
+        </TouchableOpacity>
+      ))}
+    </View>
+  );
+};
+
+
 const { width } = Dimensions.get('window');
 const cardWidth = (width - 60) / 2;
 const radius = 180;
 const SERVER_URL = `${URL}:8000`;
 
 export default function HomeScreen({ navigation }) {
-  const [currentUser, setCurrentUser] = useState({ username: 'anonymous' });
+  const [currentTab, setCurrentTab] = useState('בית');
   const [selectedEmotionIndex, setSelectedEmotionIndex] = useState(0);
   const [darkMode, setDarkMode] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -214,9 +256,52 @@ export default function HomeScreen({ navigation }) {
     });
   };
 
+  const selectedEmotion = emotions[selectedEmotionIndex];
+
+  const theme = {
+    background: darkMode ? "#121212" : selectedEmotion.color + '15',
+    card: darkMode ? "#1E1E1E" : "#FFFFFF",
+    text: darkMode ? "#E1E1E1" : "#333333",
+    subtext: darkMode ? "#AAAAAA" : "#666666",
+    accent: "#6A0DAD",
+  };
+
+  const categories = [
+    { id: 1, title: 'צ׳אט', image: require('../assets/chatbot.png'), description: 'שוחח עם הצ׳אט שלנו', backgroundColor: '#FFF5F5' },
+    { id: 2, title: 'קהילה שיתופית', image: require('../assets/community.png'), description: 'הצטרף לקהילה שלנו', backgroundColor: '#f1e9f5' },
+    { id: 3, title: 'תוכן העשרה', image: require('../assets/contant.png'), description: 'גלה תוכן חדש ומעניין', backgroundColor: '#F7FAFC' },
+    { id: 4, title: 'מצא חבר', image: require('../assets/talkWithFriend.png'), description: 'גלה חברים חדשים', backgroundColor: '#FFF5F5' },
+  ];
+
+  const handleCategoryPress = (id) => {
+    if (id === 1) {
+      navigation.navigate("צ'אט בוט");
+    } else if (id === 2) {
+      navigation.navigate('קהילה');
+    } else if (id === 3) {
+      navigation.navigate('תוכן העשרה');
+    } else if (id === 4) {
+      navigation.navigate("מצא חבר");
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      console.log("here")
+      await SecureStore.deleteItemAsync('access_token');
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'LoginScreen' }],
+      });
+    } catch (error) {
+      console.error('Logout failed:', error);
+      alert('התרחשה שגיאה ביציאה מהמערכת');
+    }
+  };
+
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}> 
-      <TouchableOpacity style={styles.logoutButton} onPress={() => {}}>
+      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
         <Ionicons name="log-out-outline" size={30} color="#718096" />
       </TouchableOpacity>
 
@@ -313,6 +398,58 @@ export default function HomeScreen({ navigation }) {
           ))}
         </View>
       </ScrollView>
+      
+      
+
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: { flex: 1 },
+  scrollContent: { flexGrow: 1, padding: 20 },
+  headerContainer: { alignItems: 'flex-end', marginBottom: 32, marginTop: 20, padding: 20 },
+  greeting: { fontSize: 32, fontWeight: 'bold', color: '#2D3748', marginBottom: 8 },
+  subtitle: { fontSize: 18, color: '#718096', textAlign: 'right' },
+  logoutButton: {
+    position: 'absolute',
+    top: 20,
+    left: 20,
+    zIndex: 999,
+    elevation: 10,
+    backgroundColor: 'transparent', 
+    padding: 10, 
+  },
+  quoteText: { fontSize: 16, fontWeight: '500', textAlign: 'center', marginTop: 12, lineHeight: 24 },
+  tipCard: { borderRadius: 15, padding: 20, marginBottom: 20, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 8, elevation: 3 },
+  tipTitle: { fontSize: 18, fontWeight: 'bold', marginBottom: 8, textAlign: 'right' },
+  tipText: { fontSize: 16, textAlign: 'right', lineHeight: 22 },
+  categoriesContainer: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', gap: 20 },
+  categoryCard: { width: cardWidth, borderRadius: 20, padding: 16, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.05, shadowRadius: 12, elevation: 3 },
+  imageContainer: { width: '100%', height: 120, marginBottom: 12, justifyContent: 'center', alignItems: 'center' },
+  categoryImage: { width: '80%', height: '80%' },
+  textContainer: {},
+  categoryTitle: { fontSize: 18, fontWeight: '700', color: '#2D3748', marginBottom: 4, textAlign: 'center' },
+  categoryDescription: { fontSize: 14, color: '#718096', textAlign: 'center', lineHeight: 20 },
+    bottomBar: {
+    flexDirection: 'row-reverse',
+    justifyContent: 'space-around',
+    paddingVertical: 10,
+    borderTopWidth: 1,
+    borderColor: '#ccc',
+    backgroundColor: '#fff',
+  },
+  tabItem: {
+  alignItems: 'center',
+  justifyContent: 'center',
+  },
+  activeDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#007BFF',
+    marginTop: -6,
+    marginBottom: 4,
+  },
+
+});

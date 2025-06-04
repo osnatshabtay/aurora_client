@@ -47,6 +47,10 @@ const QuestionnaireScreen = () => {
     // Save the selected image to state
     if (isImage) {
       setImageSelect(option);
+      setAnswers((prevAnswers) => ({
+        ...prevAnswers,
+        [currentQuestionIndex]: option, 
+      }));
     }
   
 
@@ -173,7 +177,7 @@ const QuestionnaireScreen = () => {
         Alert.alert('איזה כיף', 'ברוך הבא אלינו');
         navigation.reset({
           index: 0,
-          routes: [{ name: 'HomeScreen' }],
+          routes: [{ name: 'MainTabs' }],
         });
       
       } catch (error) {
@@ -197,8 +201,8 @@ const QuestionnaireScreen = () => {
     const currentQuestion = filteredQuestions[currentQuestionIndex];
     return currentQuestion.multiple
       ? !currentAnswer || currentAnswer.length === 0
-      : !currentAnswer;
-  };
+      : currentAnswer === undefined || currentAnswer === '';
+    };
 
   if (questions.length === 0) {
     return (

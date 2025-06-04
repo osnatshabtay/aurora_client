@@ -15,6 +15,7 @@ module.exports = function (api) {
           verbose: false,
         },
       ],
+      'react-native-reanimated/plugin', // 👈 זה צריך להיות ככה בדיוק – מחרוזת רגילה
     ],
   };
 };

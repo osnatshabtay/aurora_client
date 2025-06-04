@@ -15,4 +15,5 @@ export const HeartOutline = () => (
   export const HeartFilled = () => (
     <MaterialCommunityIcons name="heart" size={24} color="#f00" />
   );
-  
+
+  export const FilterIcon = () => <Icon name="filter-list" size={24} color="#000" />;

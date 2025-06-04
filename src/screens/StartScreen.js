@@ -24,7 +24,6 @@ export default function StartScreen({ navigation }) {
       >
         הרשמה
       </Button>
-      
 
     </Background>
   )
