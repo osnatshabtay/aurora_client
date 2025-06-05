@@ -44,10 +44,10 @@ export default function MainTabs() {
   })}
 >
   <Tab.Screen name="תוכן העשרה" component={EnrichmentContent} />
+  <Tab.Screen name="מצא חבר" component={SocialGraph} />
   <Tab.Screen name="צ'אט בוט" component={ChatBotScreen} />
   <Tab.Screen name="קהילה" component={CommunityScreen} />
   <Tab.Screen name="בית" component={HomeScreen} />
-  <Tab.Screen name="מצא חבר" component={SocialGraph} />
 </Tab.Navigator>
 
   );

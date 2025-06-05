@@ -11,10 +11,36 @@ import {
 import { getAvatarImage } from '../helpers/avatar';
 import { useNavigation } from '@react-navigation/native';
 import { api } from '../api';
+import * as SecureStore from 'expo-secure-store';
+import { URL } from '@env';
+
 
 export default function SocialGraphScreen() {
   const [users, setUsers] = useState([]);
   const navigation = useNavigation();
+  const [currentUser, setCurrentUser] = useState(null);
+  const SERVER_URL = `${URL}:8000`;
+
+  
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      try {
+        const token = await SecureStore.getItemAsync('access_token');
+        if (!token) return;
+        const res = await fetch(`${SERVER_URL}/users/me`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        if (data.username) {
+          setCurrentUser({ username: data.username });
+        }
+      } catch (err) {
+        console.error('Error fetching user:', err);
+      }
+    };
+
+    fetchCurrentUser();
+  }, []);
 
   useEffect(() => {
     const fetchRecommendations = async () => {
@@ -28,10 +54,17 @@ export default function SocialGraphScreen() {
     fetchRecommendations();
   }, []);
 
+  const handleUserPress = (targetUser) => {
+    navigation.navigate('ChatScreen', {
+      currentUser: currentUser.username,
+      targetUser: targetUser
+    });
+  };
+
   const renderItem = ({ item }) => (
     <TouchableOpacity
       style={styles.card}
-      onPress={() => navigation.navigate('ChatScreen', { recipient: item.username })}
+      onPress={() => handleUserPress(item.username)}
       activeOpacity={0.8}
     >
       <Image source={getAvatarImage(item.selectedImage)} style={styles.avatar} />

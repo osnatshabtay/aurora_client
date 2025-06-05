@@ -3,14 +3,30 @@ import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet } from 'r
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 import { URL } from '@env';
+import { useNavigation } from '@react-navigation/native';
 
 const SERVER_URL = `${URL}:8000`;
 
 export default function ChatScreen({ route }) {
   const { currentUser, targetUser } = route.params;
+  console.log('currentUser:', currentUser);
+  console.log('targetUser:', targetUser);
+
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const socketRef = useRef(null);
+  const navigation = useNavigation();
+
+
+  useEffect(() => {
+    navigation.setOptions({
+      title: `צ'אט עם ${targetUser}`,
+      headerStyle: { backgroundColor: '#007bff' },
+      headerTintColor: '#fff',
+      headerTitleStyle: { fontWeight: 'bold', fontSize: 18 }
+    });
+  }, [targetUser]);
+
 
   useEffect(() => {
     const connect = async () => {

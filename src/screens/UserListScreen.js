@@ -14,7 +14,7 @@ export default function UserListScreen({ route }) {
 
   const fetchUsers = async () => {
     try {
-      const response = await api('/users/all'); // נניח שיש לך כזה ראוט, אחרת נוסיף אחד בשרת
+      const response = await api('/users/all'); 
       setUsers(response.users.filter(u => u.username !== currentUser));
     } catch (error) {
       console.error('Error fetching users:', error);

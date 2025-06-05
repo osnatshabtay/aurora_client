@@ -74,6 +74,7 @@ const radius = 180;
 const SERVER_URL = `${URL}:8000`;
 
 export default function HomeScreen({ navigation }) {
+  const [currentUser, setCurrentUser] = useState(null);
   const [currentTab, setCurrentTab] = useState('בית');
   const [selectedEmotionIndex, setSelectedEmotionIndex] = useState(0);
   const [darkMode, setDarkMode] = useState(false);
@@ -373,7 +374,11 @@ export default function HomeScreen({ navigation }) {
                 else if (category.id === 2) navigation.navigate('CommunityScreen');
                 else if (category.id === 3) navigation.navigate('EnrichmentContent');
                 else if (category.id === 4) navigation.navigate('SocialGraph');
-                else if (category.id === 5) navigation.navigate('UserListScreen', { currentUser: currentUser.username });
+                else if (category.id === 5) 
+                  {
+                    console.log("cureentuser: " , currentUser.username);
+                    navigation.navigate('SocialGraphScreen');
+                  }
               }}
             >
               <View style={styles.imageContainer}>
