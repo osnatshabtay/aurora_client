@@ -9,21 +9,9 @@ import {
   StartScreen,
   LoginScreen,
   RegisterScreen,
-  Dashboard,
   QuestionsScreen,
   RegulationsScreen,
-  EnrichmentContent,
-  CategoryContent,
-  HomeScreenManager,
-  UserApprovalScreen,
-  PostApprovalScreen,
-  OptinalHomeScreen,
-  PersonalizedContentScreen,
-  MeditationPlayerScreen,
-  MeditationSelectionScreen,
   UserListScreen,
-  ChatScreen,
-  SocialGraphScreen,
 } from './src/screens';
 
 const Stack = createStackNavigator();
@@ -36,24 +24,12 @@ export default function App() {
           <Stack.Screen name="StartScreen" component={StartScreen} />
           <Stack.Screen name="LoginScreen" component={LoginScreen} />
           <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
-          <Stack.Screen name="RegulationsScreen" component={RegulationsScreen} />
-          <Stack.Screen name="Dashboard" component={Dashboard} />
           <Stack.Screen name="QuestionsScreen" component={QuestionsScreen} />
+          <Stack.Screen name="RegulationsScreen" component={RegulationsScreen} />
           <Stack.Screen name="UserListScreen" component={UserListScreen} />
-          <Stack.Screen name="ChatScreen" component={ChatScreen} />
 
-          {/* כאן נכנס הסרגל התחתון */}
+          {/* לאחר הכניסה — גישה לכל האפליקציה עם הסרגל ניווט */}
           <Stack.Screen name="MainTabs" component={MainTabs} />
-
-          {/* שאר מסכים שנפתחים מתוך Tabs */}
-          <Stack.Screen name="EnrichmentContent" component={EnrichmentContent} />
-          <Stack.Screen name="CategoryContent" component={CategoryContent} />
-          <Stack.Screen name="HomeScreenManager" component={HomeScreenManager} />
-          <Stack.Screen name="PostApprovalScreen" component={PostApprovalScreen} />
-          <Stack.Screen name="MeditationPlayerScreen" component={MeditationPlayerScreen} />
-          <Stack.Screen name="MeditationSelectionScreen" component={MeditationSelectionScreen} />
-          <Stack.Screen name="SocialGraphScreen" component={SocialGraphScreen} />
-
         </Stack.Navigator>
       </NavigationContainer>
     </PaperProvider>

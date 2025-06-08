@@ -34,7 +34,7 @@ const BottomBar = ({ currentTab, setCurrentTab, navigation }) => {
     { icon: 'account-group', label: 'קהילה', screen: 'CommunityScreen' },
     { icon: 'robot-outline', label: "צ'אט בוט", screen: 'ChatBotScreen' },
     { icon: 'book-open-variant', label: 'תוכן העשרה', screen: 'EnrichmentContent' },
-    { icon: 'account-search', label: 'מצא חבר', screen: 'SocialGraph' },
+    { icon: 'account-search', label: 'מצא חבר', screen: 'SocialGraphScreen' },
   ];
 
   const handleTabPress = (label, screen) => {
@@ -364,7 +364,6 @@ export default function HomeScreen({ navigation }) {
             { id: 2, title: 'קהילה שיתופית', image: require('../assets/community.png'), description: 'הצטרף לקהילה שלנו', backgroundColor: '#f1e9f5' },
             { id: 3, title: 'תוכן העשרה', image: require('../assets/contant.png'), description: 'גלה תוכן חדש ומעניין', backgroundColor: '#F7FAFC' },
             { id: 4, title: 'מצא חבר', image: require('../assets/talkWithFriend.png'), description: 'גלה חברים חדשים', backgroundColor: '#FFF5F5' },
-            { id: 5, title: 'צאט', image: require('../assets/talkWithFriend.png'), description: 'צאט בין 2 יוזרים', backgroundColor: '#f1e9f5' },
           ].map((category) => (
             <TouchableOpacity
               key={category.id}
@@ -373,12 +372,7 @@ export default function HomeScreen({ navigation }) {
                 if (category.id === 1) navigation.navigate('ChatBotScreen');
                 else if (category.id === 2) navigation.navigate('CommunityScreen');
                 else if (category.id === 3) navigation.navigate('EnrichmentContent');
-                else if (category.id === 4) navigation.navigate('SocialGraph');
-                else if (category.id === 5) 
-                  {
-                    console.log("cureentuser: " , currentUser.username);
-                    navigation.navigate('SocialGraphScreen');
-                  }
+                else if (category.id === 4) navigation.navigate('מצא חבר', { screen: 'SocialGraphScreen' });
               }}
             >
               <View style={styles.imageContainer}>
