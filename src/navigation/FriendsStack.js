@@ -10,8 +10,11 @@ export default function FriendsStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="SocialGraphScreen" component={SocialGraphScreen} />
-      <Stack.Screen name="ChatScreen" component={ChatScreen} />
-
+      <Stack.Screen
+        name="ChatScreen"
+        component={ChatScreen}
+        options={{ headerShown: true }}
+      />
     </Stack.Navigator>
   );
 }
