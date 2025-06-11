@@ -446,7 +446,7 @@ useFocusEffect(
               key={category.id}
               style={[styles.categoryCard, { backgroundColor: category.backgroundColor }]}
               onPress={() => {
-                if (category.id === 1) navigation.navigate('ChatBotScreen');
+                if (category.id === 1) navigation.navigate("צ'אט בוט", { screen: 'ChatBotScreen' });
                 else if (category.id === 2) navigation.navigate('CommunityScreen');
                 else if (category.id === 3) navigation.navigate('EnrichmentContent');
                 else if (category.id === 4) navigation.navigate('מצא חבר', { screen: 'SocialGraphScreen' });
