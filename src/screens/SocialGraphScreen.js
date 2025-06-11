@@ -21,6 +21,25 @@ export default function SocialGraphScreen() {
   const [currentUser, setCurrentUser] = useState(null);
   const SERVER_URL = `${URL}:8000`;
 
+const [unreadSenders, setUnreadSenders] = useState([]);
+
+useEffect(() => {
+  const fetchUnread = async () => {
+    try {
+      const data = await api('/chat/unread');
+      console.log(data);
+      const fromUsers = (data.messages || []).map(msg => msg.from);
+      const uniqueSenders = [...new Set(fromUsers)];
+      setUnreadSenders(uniqueSenders);
+    } catch (error) {
+      console.error('Error fetching unread:', error.message);
+      Alert.alert('Error', 'Failed to fetch unread.');
+    }
+  };
+
+  fetchUnread(); 
+}, []);
+
   
   useEffect(() => {
     const fetchCurrentUser = async () => {
@@ -61,16 +80,24 @@ export default function SocialGraphScreen() {
     });
   };
 
-  const renderItem = ({ item }) => (
-    <TouchableOpacity
-      style={styles.card}
-      onPress={() => handleUserPress(item.username)}
-      activeOpacity={0.8}
-    >
-      <Image source={getAvatarImage(item.selectedImage)} style={styles.avatar} />
-      <Text style={styles.username}>{item.username}</Text>
-    </TouchableOpacity>
-  );
+  const renderItem = ({ item }) => {
+    const hasUnread = unreadSenders.includes(item.username);
+
+    return (
+      <TouchableOpacity
+        style={styles.card}
+        onPress={() => handleUserPress(item.username)}
+        activeOpacity={0.8}
+      >
+        <View style={{ position: 'relative' }}>
+          <Image source={getAvatarImage(item.selectedImage)} style={styles.avatar} />
+          {hasUnread && <View style={styles.redDot} />}
+        </View>
+        <Text style={styles.username}>{item.username}</Text>
+      </TouchableOpacity>
+    );
+  };
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -147,4 +174,16 @@ const styles = StyleSheet.create({
     color: '#2D3748',
     textAlign: 'center',
   },
+  redDot: {
+  position: 'absolute',
+  top: 2,
+  right: 2,
+  width: 22,
+  height: 22,
+  borderRadius: 15,
+  backgroundColor: 'red',
+  borderWidth: 1,
+  borderColor: '#fff',
+  zIndex: 1,
+},
 });

@@ -16,6 +16,12 @@ import { useSharedValue, withTiming } from 'react-native-reanimated';
 import { Avatar, Card, Button, Title, IconButton } from 'react-native-paper';
 import * as SecureStore from 'expo-secure-store';
 import { URL } from '@env';
+import { api } from '../api';
+import { getAvatarImage } from '../helpers/avatar';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback } from 'react';
+
+
 
 const emotions = [
   { id: 1, name: "שמחה", color: "#FFD700", quote: "השמחה היא בחירה. בחרת נכון היום!", icon: "😊" },
@@ -81,6 +87,63 @@ export default function HomeScreen({ navigation }) {
   const [unreadCount, setUnreadCount] = useState(0);
   const [showDropdown, setShowDropdown] = useState(false);
   const [unreadMessages, setUnreadMessages] = useState([]);
+const [senderImages, setSenderImages] = useState({});
+
+    useEffect(() => {
+      const fetchCurrentUser = async () => {
+        try {
+          const token = await SecureStore.getItemAsync('access_token');
+          if (!token) return;
+          const res = await fetch(`${SERVER_URL}/users/me`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          const data = await res.json();
+          if (data.username) {
+            setCurrentUser({ username: data.username });
+          }
+        } catch (err) {
+          console.error('Error fetching user:', err);
+        }
+      };
+  
+      fetchCurrentUser();
+    }, []);
+  
+useFocusEffect(
+  useCallback(() => {
+    const fetchUnread = async () => {
+      try {
+        const data = await api('/chat/unread');
+        const fromUsers = (data.messages || []).map(msg => msg.from);
+        const uniqueUsernames = [...new Set(fromUsers)];
+
+        const params = new URLSearchParams();
+        uniqueUsernames.forEach(username => params.append('usernames', username));
+
+        const res = await fetch(`${SERVER_URL}/users/multiple?${params.toString()}`);
+        const userInfos = await res.json();
+
+        const userImageMap = {};
+        userInfos.forEach(user => {
+          userImageMap[user.username] = user.selectedImage;
+        });
+
+        setUnreadCount(data.count);
+        setUnreadMessages(data.messages);
+        setSenderImages(userImageMap);
+      } catch (error) {
+        console.error('Error fetching unread:', error.message);
+        Alert.alert('Error', 'Failed to fetch unread.');
+      }
+    };
+
+    fetchUnread();
+  }, [])
+);
+
+
+
+
 
   const [dailyTip] = useState([
     "הקדש 5 דקות ביום למדיטציה",
@@ -89,38 +152,6 @@ export default function HomeScreen({ navigation }) {
     "רשום 3 דברים שאתה מודה עליהם",
     "התקשר לחבר או בן משפחה",
   ][Math.floor(Math.random() * 5)]);
-
-  useEffect(() => {
-    const fetchCurrentUser = async () => {
-      try {
-        const token = await SecureStore.getItemAsync('access_token');
-        if (!token) return;
-        const res = await fetch(`${SERVER_URL}/users/me`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const data = await res.json();
-        if (data.username) {
-          setCurrentUser({ username: data.username });
-          fetchUnreadMessages(data.username);
-        }
-      } catch (err) {
-        console.error('Error fetching user:', err);
-      }
-    };
-
-    const fetchUnreadMessages = async (username) => {
-      try {
-        const res = await fetch(`${SERVER_URL}/chat/unread/${username}`);
-        const data = await res.json();
-        setUnreadCount(data.count);
-        setUnreadMessages(data.messages);
-      } catch (err) {
-        console.error('Error fetching unread messages:', err);
-      }
-    };
-
-    fetchCurrentUser();
-  }, []);
 
   const angle = 180 / emotions.length;
   const pointerAngle = useSharedValue(0);
@@ -132,11 +163,21 @@ export default function HomeScreen({ navigation }) {
 
   const handleNavigateToChat = (targetUser) => {
     setShowDropdown(false);
-    navigation.navigate('ChatScreen', {
-      currentUser: currentUser.username,
-      targetUser,
-    });
+    console.log("TTTTTTTTTTTTTTTTTTT");
+    console.log("CURRENTUSER: " , currentUser.username);
+    console.log("TARGETUSER: " , targetUser);
+    // navigation.navigate('ChatScreen', {
+    //   currentUser: currentUser.username,
+    //   targetUser,
+    // });
+      navigation.navigate('מצא חבר', {
+  screen: 'ChatScreen',
+  params: { currentUser: currentUser.username , targetUser: targetUser }
+});
+
   };
+
+
 
   const selectedEmotion = emotions[selectedEmotionIndex];
 
@@ -150,8 +191,8 @@ export default function HomeScreen({ navigation }) {
 
   const styles = StyleSheet.create({
     container: { flex: 1 },
-    logoutButton: { position: 'absolute', top: 20, left: 20, zIndex: 1 },
-    inboxIcon: { position: 'absolute', top: 20, right: 20, zIndex: 10 },
+    logoutButton: { position: 'absolute', top: 50, left: 20, zIndex: 1 },
+    inboxIcon: { position: 'absolute', top: 50, right: 20, zIndex: 10, elevation: 10,padding:5},
     badge: {
       position: 'absolute',
       top: -6,
@@ -162,6 +203,7 @@ export default function HomeScreen({ navigation }) {
       height: 20,
       justifyContent: 'center',
       alignItems: 'center',
+      zIndex: 50,
     },
     badgeText: { color: '#fff', fontSize: 12, fontWeight: 'bold' },
     dropdown: {
@@ -256,25 +298,6 @@ export default function HomeScreen({ navigation }) {
     });
   };
 
-  const categories = [
-    { id: 1, title: 'צ׳אט', image: require('../assets/chatbot.png'), description: 'שוחח עם הצ׳אט שלנו', backgroundColor: '#FFF5F5' },
-    { id: 2, title: 'קהילה שיתופית', image: require('../assets/community.png'), description: 'הצטרף לקהילה שלנו', backgroundColor: '#f1e9f5' },
-    { id: 3, title: 'תוכן העשרה', image: require('../assets/contant.png'), description: 'גלה תוכן חדש ומעניין', backgroundColor: '#F7FAFC' },
-    { id: 4, title: 'מצא חבר', image: require('../assets/talkWithFriend.png'), description: 'גלה חברים חדשים', backgroundColor: '#FFF5F5' },
-  ];
-
-  const handleCategoryPress = (id) => {
-    if (id === 1) {
-      navigation.navigate("צ'אט בוט");
-    } else if (id === 2) {
-      navigation.navigate('קהילה');
-    } else if (id === 3) {
-      navigation.navigate('תוכן העשרה');
-    } else if (id === 4) {
-      navigation.navigate("מצא חבר");
-    }
-  };
-
   const handleLogout = async () => {
     try {
       console.log("here")
@@ -290,7 +313,7 @@ export default function HomeScreen({ navigation }) {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}> 
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background}]}> 
       <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
         <Ionicons name="log-out-outline" size={30} color="#718096" />
       </TouchableOpacity>
@@ -304,19 +327,73 @@ export default function HomeScreen({ navigation }) {
         )}
       </TouchableOpacity>
 
-      {showDropdown && (
-        <View style={styles.dropdown}>
-          <FlatList
-            data={unreadMessages}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={({ item }) => (
-              <TouchableOpacity onPress={() => handleNavigateToChat(item.from)}>
-                <Text style={styles.dropdownItem}>הודעה מ־{item.from}</Text>
-              </TouchableOpacity>
-            )}
-          />
-        </View>
-      )}
+{showDropdown && (
+<View style={{   position: 'absolute',
+  top: 70,
+  right: 20,
+  width: 250,
+  backgroundColor: '#fff',
+  borderRadius: 12,
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.15,
+  shadowRadius: 6,
+  elevation: 8,
+  zIndex: 1000,
+  paddingVertical: 10,
+  maxHeight: 300}}>
+
+
+  <FlatList
+    data={unreadMessages}
+    keyExtractor={(item, index) => index.toString()}
+    renderItem={({ item }) => (
+      <TouchableOpacity
+        style={{  flexDirection: 'row-reverse',
+  alignItems: 'center',
+  paddingHorizontal: 15,
+  paddingVertical: 12,
+  borderBottomWidth: 1,
+  borderBottomColor: '#f0f0f0',}}
+        onPress={() => handleNavigateToChat(item.from)}
+      >        
+        <Image
+          source={getAvatarImage(senderImages[item.from])}
+          style={{
+            width: 40,
+            height: 40,
+            borderRadius: 20,
+            marginRight: 10,
+          }}
+        />
+
+<View style={{ flex: 1 }}>
+  <Text style={{
+    fontWeight: 'bold',
+    fontSize: 14,
+    color: '#333',
+    textAlign: 'center',
+    marginBottom: 2, 
+  }}>
+    {item.from}
+  </Text>
+  <Text style={{
+    fontSize: 13,
+    color: '#666',
+    textAlign: 'center', 
+  }} numberOfLines={1}>
+    {item.message}
+  </Text>
+</View>
+
+      </TouchableOpacity>
+    )}
+  />
+</View>
+
+)}
+
+
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.headerContainer}>
@@ -394,7 +471,7 @@ export default function HomeScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
+  container: { flex: 1 , paddingTop:400},
   scrollContent: { flexGrow: 1, padding: 20 },
   headerContainer: { alignItems: 'flex-end', marginBottom: 32, marginTop: 20, padding: 20 },
   greeting: { fontSize: 32, fontWeight: 'bold', color: '#2D3748', marginBottom: 8 },
@@ -406,7 +483,7 @@ const styles = StyleSheet.create({
     zIndex: 999,
     elevation: 10,
     backgroundColor: 'transparent', 
-    padding: 10, 
+    padding: 10,
   },
   quoteText: { fontSize: 16, fontWeight: '500', textAlign: 'center', marginTop: 12, lineHeight: 24 },
   tipCard: { borderRadius: 15, padding: 20, marginBottom: 20, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 8, elevation: 3 },
@@ -439,5 +516,90 @@ const styles = StyleSheet.create({
     marginTop: -6,
     marginBottom: 4,
   },
+dropdownItem: {
+  paddingVertical: 10,
+  paddingHorizontal: 12,
+  borderBottomColor: '#ddd',
+  borderBottomWidth: 1,
+  textAlign: 'right',
+},
+notificationDropdown: {
+  position: 'absolute',
+  top: 70,
+  right: 20,
+  width: 280,
+  backgroundColor: 'red',
+  borderRadius: 12,
+  shadowColor: 'red',
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.15,
+  shadowRadius: 6,
+  elevation: 8,
+  zIndex: 1000,
+  paddingVertical: 10,
+  maxHeight: 100,
+},
+
+notificationHeader: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  paddingHorizontal: 15,
+  paddingBottom: 8,
+  borderBottomWidth: 1,
+  borderBottomColor: '#eee',
+},
+
+notificationTitle: {
+  fontSize: 16,
+  fontWeight: 'bold',
+  color: '#333',
+},
+
+notificationBadge: {
+  backgroundColor: '#3B82F6',
+  borderRadius: 12,
+  paddingHorizontal: 6,
+  paddingVertical: 2,
+},
+
+notificationBadgeText: {
+  color: '#fff',
+  fontSize: 13,
+  fontWeight: 'bold',
+},
+
+notificationItem: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  paddingHorizontal: 15,
+  paddingVertical: 12,
+  borderBottomWidth: 1,
+  borderBottomColor: '#f2f2f2',
+},
+
+notificationAvatar: {
+  width: 36,
+  height: 36,
+  borderRadius: 18,
+  marginRight: 10,
+},
+
+notificationTextContainer: {
+  flex: 1,
+},
+
+notificationUser: {
+  fontSize: 14,
+  fontWeight: 'bold',
+  color: '#222',
+  marginBottom: 2,
+},
+
+notificationMessage: {
+  fontSize: 13,
+  color: '#666',
+},
+
 
 });
