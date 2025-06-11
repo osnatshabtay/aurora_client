@@ -68,7 +68,7 @@ useEffect(() => {
       try {
         const res = await axios.get(`${SERVER_URL}/chat/${currentUser}/${targetUser}`);
         setMessages(res.data);
-
+        console.log("MARK SEEN");
         await axios.post(`${SERVER_URL}/chat/mark_seen`, {
           from_user: targetUser,
           to_user: currentUser
