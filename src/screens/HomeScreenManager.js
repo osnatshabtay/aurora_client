@@ -8,6 +8,7 @@ import {
   Image,
   Dimensions,
 } from 'react-native';
+import * as SecureStore from 'expo-secure-store';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Ionicons } from '@expo/vector-icons';
@@ -26,24 +27,10 @@ export default function HomeScreenManager({ navigation }) {
     },
     {
       id: 2,
-      title: 'צ׳אט',
-      image: require('../assets/chatbot.png'),
-      description: 'שוחח עם הצ׳אט שלנו',
-      backgroundColor: '#FFF5F5',
-    },
-    {
-      id: 3,
       title: 'קהילה שיתופית',
       image: require('../assets/community.png'),
-      description: 'הצטרף לקהילה שלנו',
+      description: 'צפה בפעילות הקהילה',
       backgroundColor: '#f1e9f5',
-    },
-    {
-      id: 4,
-      title: 'תוכן העשרה',
-      image: require('../assets/contant.png'),
-      description: 'גלה תוכן חדש ומעניין',
-      backgroundColor: '#F7FAFC',
     },
   ];
 
@@ -51,17 +38,12 @@ export default function HomeScreenManager({ navigation }) {
     if (id === 1) {
       navigation.navigate('PostApprovalScreen');
     } else if (id === 2) {
-      navigation.navigate('ChatBotScreen');
-    } else if (id === 3) {
       navigation.navigate('CommunityScreenAdmin');
-    } else if (id === 4) {
-      navigation.navigate('EnrichmentContent');
     }
   };
 
     const handleLogout = async () => {
       try {
-        console.log("here")
         await SecureStore.deleteItemAsync('access_token');
         navigation.reset({
           index: 0,

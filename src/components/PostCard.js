@@ -60,22 +60,25 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center", 
     marginBottom: 8,
+    gap: 8, 
   },
   avatar: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    marginRight: 10,
   },
   username: {
     fontSize: 16,
     fontWeight: "bold",
+    textAlign:'center',
   },
   content: {
     fontSize: 14,
     color: "#333",
     marginBottom: 12,
+        textAlign:'center'
   },
   actions: {
     flexDirection: "row",
