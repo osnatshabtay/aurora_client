@@ -12,6 +12,9 @@ import {
   QuestionsScreen,
   RegulationsScreen,
   UserListScreen,
+  HomeScreenManager,
+  PostApprovalScreen,
+  CommunityScreenAdmin
 } from './src/screens';
 
 const Stack = createStackNavigator();
@@ -27,6 +30,9 @@ export default function App() {
           <Stack.Screen name="QuestionsScreen" component={QuestionsScreen} />
           <Stack.Screen name="RegulationsScreen" component={RegulationsScreen} />
           <Stack.Screen name="UserListScreen" component={UserListScreen} />
+          <Stack.Screen name="HomeScreenManager" component={HomeScreenManager} />
+          <Stack.Screen name="PostApprovalScreen" component={PostApprovalScreen} />
+          <Stack.Screen name="CommunityScreenAdmin" component={CommunityScreenAdmin} />
 
           {/* לאחר הכניסה — גישה לכל האפליקציה עם הסרגל ניווט */}
           <Stack.Screen name="MainTabs" component={MainTabs} />

@@ -44,26 +44,10 @@ export default function LoginScreen({ navigation }) {
       await SecureStore.setItemAsync('access_token', result.access_token);
             
       if (result.is_admin) {
-          navigation.reset({
-            index: 0,
-            routes: [
-              {
-                name: 'MainTabs',
-                state: {
-                  routes: [
-                    {
-                      name: 'בית',
-                      state: {
-                        routes: [
-                          { name: 'HomeScreenManager' }
-                        ]
-                      }
-                    }
-                  ]
-                }
-              }
-            ]
-          });
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'HomeScreenManager' }],
+        });
       } else {
         navigation.reset({
           index: 0,
