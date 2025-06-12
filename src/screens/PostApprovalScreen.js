@@ -5,11 +5,15 @@ import { PostDetailsModal } from '../components/PostDetailsModal';
 import { URL } from '@env';
 import { ActivityIndicator } from 'react-native';
 import { Text } from 'react-native-paper'
+import BackButton from '../components/BackButton'; 
+import { useNavigation } from '@react-navigation/native';
 
 export default function PostApprovalScreen() {
   const [posts, setPosts] = useState([]);
   const [selectedPost, setSelectedPost] = useState(null);
   const [loading, setLoading] = useState(true);
+    const navigation = useNavigation();
+  
 
   useEffect(() => {
     fetchPendingPosts();
@@ -58,6 +62,7 @@ export default function PostApprovalScreen() {
 
   return (
     <View style={styles.container}>
+            <BackButton goBack={navigation.goBack} />
       <Text style={styles.header}>אישור פוסטים</Text>
       <Text style={styles.subHeader}>
         בלחיצה על הכפתור "אישור", הפוסט יאושר ויופיע לכלל משתמשי האפליקציה.
@@ -80,6 +85,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
     backgroundColor: "#F9F9F9",
+    paddingTop:80
   },
   header: {
     fontSize: 22,

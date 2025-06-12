@@ -18,6 +18,10 @@ import { theme } from '../core/theme';
 import { URL } from '@env';
 import { api } from '../api';
 import { moodOptions } from '../helpers/moods';
+import BackButton from '../components/BackButton'; 
+import { useNavigation } from '@react-navigation/native';
+
+
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -34,6 +38,7 @@ const Avatar = ({ size = 40, uri }) => {
 };
 
 export default function CommunityScreenAdmin() {
+  const navigation = useNavigation();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState({
@@ -92,6 +97,7 @@ export default function CommunityScreenAdmin() {
 
   return (
     <View style={styles.container}>
+      <BackButton goBack={navigation.goBack} />
       <ScrollView style={styles.scrollArea}>
         <View style={styles.contentContainer}>
           <MoodFilter />
@@ -148,6 +154,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#EAF4F4',
     direction:'rtl',
+    paddingTop:80
   },
   scrollArea: {
     flex: 1,

@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
   },
   logoutButton: {
     position: 'absolute',
-    top: 20,
+    top: 40,
     left: 20,
     zIndex: 999,
     elevation: 10,
