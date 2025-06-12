@@ -53,7 +53,7 @@ export default function HomeScreenManager({ navigation }) {
     } else if (id === 2) {
       navigation.navigate('ChatBotScreen');
     } else if (id === 3) {
-      navigation.navigate('CommunityScreen');
+      navigation.navigate('CommunityScreenAdmin');
     } else if (id === 4) {
       navigation.navigate('EnrichmentContent');
     }

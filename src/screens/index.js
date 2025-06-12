@@ -16,3 +16,4 @@ export { default as MeditationSelectionScreen } from './MeditationSelectionScree
 export { default as UserListScreen } from './UserListScreen'
 export { default as ChatScreen } from './ChatScreen'
 export { default as SocialGraphScreen } from './SocialGraphScreen'
+export { default as CommunityScreenAdmin } from './CommunityScreenAdmin'
