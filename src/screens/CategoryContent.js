@@ -9,10 +9,7 @@ export default function CategoryContent({ route }) {
   const navigation = useNavigation();
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      
-      <BackButton goBack={navigation.goBack} />
-      
+    <ScrollView contentContainerStyle={styles.container}>      
       <Text style={styles.icon}>{icon}</Text>
       <Text style={styles.title}>{titleHe}</Text>
       <Text style={styles.subtitle}>{titleEn}</Text>

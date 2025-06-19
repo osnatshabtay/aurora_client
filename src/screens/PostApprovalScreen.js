@@ -62,7 +62,6 @@ export default function PostApprovalScreen() {
 
   return (
     <View style={styles.container}>
-            <BackButton goBack={navigation.goBack} />
       <Text style={styles.header}>אישור פוסטים</Text>
       <Text style={styles.subHeader}>
         בלחיצה על הכפתור "אישור", הפוסט יאושר ויופיע לכלל משתמשי האפליקציה.

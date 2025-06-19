@@ -72,7 +72,6 @@ export default function RegisterScreen({ navigation, route}) {
   
   return (
     <Background>
-      <BackButton goBack={navigation.goBack} />
       <Logo />
       <Header>יצירת חשבון</Header>
       <TextInput
@@ -115,7 +114,7 @@ export default function RegisterScreen({ navigation, route}) {
       </View>
       <View style={styles.row}>
       <TouchableOpacity onPress={() => navigation.replace('LoginScreen')}>
-          <Text style={styles.link}> התחבר </Text>
+          <Text style={styles.link}> כניסה </Text>
         </TouchableOpacity>
         <Text>יש לך כבר חשבון ?  </Text>
       </View>

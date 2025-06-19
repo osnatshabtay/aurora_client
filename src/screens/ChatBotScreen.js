@@ -28,7 +28,7 @@ export default function ChatBotScreen() {
         setUserAvatar(res.selectedImage);
         }
     } catch (err) {
-        console.error('Error fetching user avatar:', err);
+        console.log('Error fetching user avatar:', err);
     }
     };
 
@@ -46,7 +46,7 @@ export default function ChatBotScreen() {
                 setMessages(formattedMessages);
             }
         } catch (error) {
-            console.error('Error fetching chat history:', error.message);
+            console.log('Error fetching chat history:', error.message);
         }
     };
 
@@ -70,7 +70,7 @@ export default function ChatBotScreen() {
         );
         await sound.playAsync();
     } catch (error) {
-        console.warn('Sound error:', error);
+        console.log('Sound error:', error);
     }
 
     try {
@@ -87,7 +87,7 @@ export default function ChatBotScreen() {
 
         setMessages((prev) => [...prev, botMessage]);
     } catch (error) {
-        console.error('Error:', error.message);
+        console.log('Error:', error.message);
     } finally {
         setBotTyping(false);
         setLoading(false);
@@ -123,8 +123,6 @@ export default function ChatBotScreen() {
         </Animated.View>
     );
     };
-
-
 
 
     return (

@@ -32,7 +32,7 @@ useEffect(() => {
       const uniqueSenders = [...new Set(fromUsers)];
       setUnreadSenders(uniqueSenders);
     } catch (error) {
-      console.error('Error fetching unread:', error.message);
+      console.log('Error fetching unread:', error.message);
       Alert.alert('Error', 'Failed to fetch unread.');
     }
   };

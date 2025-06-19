@@ -35,7 +35,7 @@ export default function ChatScreen({ route }) {
         setTargetUserAvatar(resTarget.data?.selectedImage);
 
       } catch (err) {
-        console.error("Error loading avatars:", err);
+        console.log("Error loading avatars:", err);
       }
     };
 
@@ -74,7 +74,7 @@ useEffect(() => {
           to_user: currentUser
         });
       } catch (err) {
-        console.error("Error loading chat or updating seen:", err);
+        console.log("Error loading chat or updating seen:", err);
       }
 
       const ws = new WebSocket(`${SERVER_URL.replace('http', 'ws')}/ws?token=${token}`);

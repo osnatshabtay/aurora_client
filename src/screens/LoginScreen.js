@@ -57,14 +57,13 @@ export default function LoginScreen({ navigation }) {
 
       
     } catch (error) {
-      console.error('Error during log in:', error.message);
+      console.log('Error during log in:', error.message);
       alert('Error: ' + error.message);
     }
   };
 
   return (
     <Background>
-      <BackButton goBack={navigation.goBack} />
       <Logo />
       <Header>ברוכים הבאים</Header>
       <TextInput

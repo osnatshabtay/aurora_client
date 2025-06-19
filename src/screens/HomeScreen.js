@@ -132,7 +132,7 @@ useFocusEffect(
         setUnreadMessages(data.messages);
         setSenderImages(userImageMap);
       } catch (error) {
-        console.error('Error fetching unread:', error.message);
+        console.log('Error fetching unread:', error.message);
         Alert.alert('Error', 'Failed to fetch unread.');
       }
     };
@@ -437,10 +437,10 @@ useFocusEffect(
 
         <View style={styles.categoriesContainer}>
           {[
-            { id: 1, title: 'צ׳אט בוט', image: require('../assets/chatbot.png'), description: 'שוחח עם הבוט שלנו', backgroundColor: '#FFF5F5' },
-            { id: 2, title: 'קהילה שיתופית', image: require('../assets/community.png'), description: 'הצטרף לקהילה שלנו', backgroundColor: '#f1e9f5' },
-            { id: 3, title: 'תוכן העשרה', image: require('../assets/contant.png'), description: 'גלה תוכן חדש ומעניין', backgroundColor: '#F7FAFC' },
-            { id: 4, title: 'מצא חבר', image: require('../assets/talkWithFriend.png'), description: 'גלה חברים חדשים', backgroundColor: '#FFF5F5' },
+            { id: 1, title: 'צ׳אט בוט', image: require('../assets/chatbot.png'), description: 'שוחחו עם הבוט שלנו', backgroundColor: '#FFF5F5' },
+            { id: 2, title: 'קהילה שיתופית', image: require('../assets/community.png'), description: 'הצטרפו לקהילה שלנו', backgroundColor: '#f1e9f5' },
+            { id: 3, title: 'תוכן העשרה', image: require('../assets/contant.png'), description: 'גלו תוכן חדש ומעניין', backgroundColor: '#F7FAFC' },
+            { id: 4, title: 'מצא חבר', image: require('../assets/talkWithFriend.png'), description: 'מצאו חברים חדשים', backgroundColor: '#FFF5F5' },
           ].map((category) => (
             <TouchableOpacity
               key={category.id}

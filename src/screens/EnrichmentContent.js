@@ -37,7 +37,6 @@ export default function EnrichmentContent({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <BackButton goBack={navigation.goBack} />
         
       <View style={styles.header}>
         <Text style={styles.title}>טוב לראות אותך כאן!</Text>
@@ -92,10 +91,10 @@ export default function EnrichmentContent({ navigation }) {
               <AntDesign name="play" size={30} color="#4f684e" />
             </View>
           </View>
-          <Text style={styles.breathingTitle}>קחי לך רגע לנשום ✨</Text>
-          <Text style={styles.breathingSubtitle}>הירגעי ושחררי מתחים</Text>
-          <Text style={styles.breathingTip}>הכניסי אוויר עמוק דרך האף עד הבטן ✨</Text>
-          <Text style={styles.breathingTip}>לחצי ובחרי לך מדיטציה להאזנה</Text>
+          <Text style={styles.breathingTitle}>קחו רגע לנשימה ✨</Text>
+          <Text style={styles.breathingSubtitle}>הירגעו ושחררו מתחים</Text>
+          <Text style={styles.breathingTip}>הכניסו אוויר עמוק דרך האף עד הבטן ✨</Text>
+          <Text style={styles.breathingTip}>לחצו ובחרו מדיטציה להאזנה</Text>
         </TouchableOpacity>
       </View>
 

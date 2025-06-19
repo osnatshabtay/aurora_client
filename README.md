@@ -1,15 +1,44 @@
-# React Native Login Template
+# Aurora Client
 
-This repo is proudly sponsored by:
+Aurora is a mobile application that provides emotional support through a personalized experience, including an AI chatbot, enrichment content, and a shared social space. This repository contains the **React Native client**, built using **Expo**.
 
-<a href="https://reactnativemarket.com/" rel="nofollow" target="_blank">
-  <img src="https://raw.githubusercontent.com/venits/react-native-market/master/assets/banner.png" width="280"><br />
-  React Native Templates & Starter Kits and Apps for easier start.
-</a>
+## Features
 
-## Demo
+- Chatbot for emotional guidance and support  
+- Personalized enrichment content (videos, music, articles) based on a user questionnaire  
+- Community sharing and connection with similar users  
 
-https://simple-login-template.web.app
+## Tech Stack
+
+- **React Native** with **Expo**
+- **JavaScript (ES6+)**
+- **Axios** for API calls
+- **AsyncStorage** for local storage
+- **React Navigation** for screen transitions
+- **.env** configuration using `react-native-dotenv`
+
+## Folder Structure
+
+├── App.js
+├── README.md
+├── app.json
+├── assets
+│   ├── adaptive-icon.png
+│   ├── favicon.png
+│   ├── icon.png
+│   └── splash.png
+├── babel.config.js
+├── node_modules
+├── package-lock.json
+├── package.json
+└── src
+    ├── api.js
+    ├── assets
+    ├── components
+    ├── core
+    ├── helpers
+    ├── navigation
+    └── screens
 
 ## How to use?
 
@@ -31,19 +60,3 @@ yarn install
  yarn ios // yarn android
 ```
 
-## Preview
-
-![homescreen](https://raw.githubusercontent.com/venits/react-native-market/master/assets/simple-login-template/homescreen.png)
-![login](https://raw.githubusercontent.com/venits/react-native-market/master/assets/simple-login-template/login.png)
-![register](https://raw.githubusercontent.com/venits/react-native-market/master/assets/simple-login-template/register.png)
-![forgot](https://raw.githubusercontent.com/venits/react-native-market/master/assets/simple-login-template/forgot.png)
-![dashboard](https://raw.githubusercontent.com/venits/react-native-market/master/assets/simple-login-template/dashboard.png)
-
-## Support
-
-In case of any questions or problems, please contact me at:
-[hello@reactnativemarket.com](mailto:hello@reactnativemarket.com)
-
-### Happy Coding 🚀
-
-### [ReactNativeMarket.com](http://reactnativemarket.com/)

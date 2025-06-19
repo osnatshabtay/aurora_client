@@ -84,8 +84,8 @@ const pickImage = async () => {
         selectedImage: data.current_username_image,
       });
     } catch (error) {
-      console.error('Error fetching posts:', error.message);
-      Alert.alert('Error', 'Failed to fetch posts.');
+      console.log('Error fetching posts:', error.message);
+      Alert.alert('Error', 'ישנה בעיה לעלות את הפוסטים');
     } finally {
       setLoading(false);
     }
@@ -93,7 +93,7 @@ const pickImage = async () => {
 
   const createPost = async () => {
     if (!newPostText.trim()) {
-      Alert.alert('Error', 'Post text cannot be empty.');
+      Alert.alert('Error', 'פוסט חייב להכיל בתוכו מלל');
       return;
     }
   
@@ -111,14 +111,14 @@ const pickImage = async () => {
       setNewPostText('');
       setSelectedMood(null);
     } catch (error) {
-      console.error('Error creating post:', error.message);
+      console.log('Error creating post:', error.message);
       Alert.alert('Error', 'הפוסט לא נוצר בהצלחה');
     }
   };
 
   const MoodSelector = () => (
   <View style={{ marginTop: 8 }}>
-    <Text style={{ fontSize: 14, marginBottom: 4 }}> איך היית מתאר את מצב הרוח שלך?</Text>
+    <Text style={{ fontSize: 14, marginBottom: 4 }}>מה מצב הרוח שלך כרגע?</Text>
     <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
       {moodOptions.map((mood) => (
         <TouchableOpacity
@@ -148,7 +148,7 @@ const pickImage = async () => {
       updatePostLikes(postId); // Update the UI
 
     } catch (error) {
-      console.error('Error liking post:', error);
+      console.log('Error liking post:', error);
       Alert.alert('Error', 'לא ניתן לבצע כרגע את הפעולה');
     }
   };
@@ -224,7 +224,7 @@ const MoodFilter = () => (
   <View style={styles.moodFilterWrapper}>
     <View style={styles.moodFilterTitleRow}>
       <FilterIcon />
-      <Text style={styles.moodFilterTitle}>סנן לפי מצב רוח</Text>
+      <Text style={styles.moodFilterTitle}>סינון לפי מצב רוח</Text>
     </View>
     <View style={styles.moodFilterGrid}>
       {moodOptions.map((mood) => (
@@ -258,7 +258,7 @@ const MoodFilter = () => (
 
               <View style={styles.textAreaContainer}>
                 <TextInput
-                  placeholder="שתף, יתייעץ או כתוב לקהילה"
+                  placeholder="כתבו פוסט, התייעצו או שתפו את הקהילה"
                   style={styles.createPostInput}
                   multiline
                   value={newPostText}

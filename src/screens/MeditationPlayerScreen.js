@@ -158,7 +158,6 @@ const startProgressUpdater = (targetSound) => {   // ②
   return (
     <LinearGradient colors={['#f3f2e9', '#d5d8c8']} style={styles.container}>
 
-              <BackButton goBack={navigation.goBack} />
         
       <View style={styles.imageWrapper}>
         <Image

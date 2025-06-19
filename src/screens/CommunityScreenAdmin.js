@@ -59,8 +59,8 @@ export default function CommunityScreenAdmin() {
         selectedImage: data.current_username_image,
       });
     } catch (error) {
-      console.error('Error fetching posts:', error.message);
-      Alert.alert('Error', 'Failed to fetch posts.');
+      console.log('Error fetching posts:', error.message);
+      Alert.alert('Error', 'אין גישה לפוסטים');
     } finally {
       setLoading(false);
     }
@@ -97,7 +97,6 @@ export default function CommunityScreenAdmin() {
 
   return (
     <View style={styles.container}>
-      <BackButton goBack={navigation.goBack} />
       <ScrollView style={styles.scrollArea}>
         <View style={styles.contentContainer}>
           <MoodFilter />
