@@ -7,7 +7,8 @@ import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { imageMapping } from '../helpers/avatar';
 
-const SERVER_URL = `${URL}:8000`;
+// const SERVER_URL = `${URL}:8000`;
+const SERVER_URL = 'http://10.0.2.2:8000';
 
 export default function ChatScreen({ route }) {
   const { currentUser, targetUser } = route.params;
@@ -77,7 +78,8 @@ useEffect(() => {
         console.log("Error loading chat or updating seen:", err);
       }
 
-      const ws = new WebSocket(`${SERVER_URL.replace('http', 'ws')}/ws?token=${token}`);
+      // const ws = new WebSocket(`${SERVER_URL.replace('http', 'ws')}/ws?token=${token}`);
+      const ws = new WebSocket(`ws://10.0.2.2:8000/ws?token=${token}`);
       socketRef.current = ws;
 
       ws.onopen = () => console.log("WebSocket connected");
@@ -89,7 +91,7 @@ useEffect(() => {
           console.error("Error parsing message:", err);
         }
       };
-      ws.onerror = (error) => console.error("WebSocket error:", error.message);
+      // ws.onerror = (error) => console.error("WebSocket error:", error.message);
       ws.onclose = () => console.log("WebSocket closed");
     };
 

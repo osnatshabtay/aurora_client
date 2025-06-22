@@ -13,6 +13,10 @@ import { useNavigation } from '@react-navigation/native';
 import { api } from '../api';
 import * as SecureStore from 'expo-secure-store';
 import { URL } from '@env';
+import { useFocusEffect } from '@react-navigation/native';
+import { Alert } from 'react-native';
+import { useCallback } from 'react';
+
 
 
 export default function SocialGraphScreen() {
@@ -23,23 +27,24 @@ export default function SocialGraphScreen() {
 
 const [unreadSenders, setUnreadSenders] = useState([]);
 
-useEffect(() => {
-  const fetchUnread = async () => {
-    try {
-      const data = await api('/chat/unread');
-      console.log(data);
-      const fromUsers = (data.messages || []).map(msg => msg.from);
-      const uniqueSenders = [...new Set(fromUsers)];
-      setUnreadSenders(uniqueSenders);
-    } catch (error) {
-      console.log('Error fetching unread:', error.message);
-      Alert.alert('Error', 'Failed to fetch unread.');
-    }
-  };
 
-  fetchUnread(); 
-}, []);
+useFocusEffect(
+  useCallback(() => {
+    const fetchUnread = async () => {
+      try {
+        const data = await api('/chat/unread');
+        const fromUsers = (data.messages || []).map(msg => msg.from);
+        const uniqueSenders = [...new Set(fromUsers)];
+        setUnreadSenders(uniqueSenders);
+      } catch (error) {
+        console.log('Error fetching unread:', error.message);
+        Alert.alert('Error', 'Failed to fetch unread.');
+      }
+    };
 
+    fetchUnread();
+  }, [])
+);
   
   useEffect(() => {
     const fetchCurrentUser = async () => {
@@ -74,6 +79,8 @@ useEffect(() => {
   }, []);
 
   const handleUserPress = (targetUser) => {
+    // console.log("CURRENTUSER: " , currentUser);
+    // console.log("TARGETUSER: " , targetUser);
     navigation.navigate('ChatScreen', {
       currentUser: currentUser.username,
       targetUser: targetUser
