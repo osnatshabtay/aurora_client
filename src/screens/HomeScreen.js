@@ -20,6 +20,8 @@ import { api } from '../api';
 import { getAvatarImage } from '../helpers/avatar';
 import { useFocusEffect } from '@react-navigation/native';
 import { useCallback } from 'react';
+import { Linking } from 'react-native';
+
 
 
 
@@ -88,6 +90,42 @@ export default function HomeScreen({ navigation }) {
   const [showDropdown, setShowDropdown] = useState(false);
   const [unreadMessages, setUnreadMessages] = useState([]);
 const [senderImages, setSenderImages] = useState({});
+const [showPhoneDropdown, setShowPhoneDropdown] = useState(false);
+
+const toggleDropdown = () => {
+  setShowDropdown(!showDropdown);
+  setShowPhoneDropdown(false);
+};
+
+const togglePhoneDropdown = () => {
+  setShowPhoneDropdown(!showPhoneDropdown);
+  setShowDropdown(false);
+};
+
+
+const supportPhones = [
+  {
+    icon: 'heart-outline',
+    name: 'עמותת ער"ן',
+    phone: '1201',
+    description: 'קו חירום נפשי הפועל 24/7 לעזרה ראשונה נפשית',
+  },
+  {
+    icon: 'chatbubble-ellipses-outline',
+    name: 'סהר',
+    phone: '*3201',
+    description: 'קו סיוע רגשי דיסקרטי לפניות אנונימיות',
+  },
+  {
+    icon: 'people-outline',
+    name: 'נפש אחת',
+    phone: '1220',
+    description: 'סיוע לנפגעי טראומה ובני משפחותיהם',
+  },
+];
+
+
+
 
     useEffect(() => {
       const fetchCurrentUser = async () => {
@@ -143,6 +181,7 @@ useFocusEffect(
 
 
 
+console.log('unreadMessages:', unreadMessages);
 
 
   const [dailyTip] = useState([
@@ -318,7 +357,7 @@ useFocusEffect(
         <Ionicons name="log-out-outline" size={30} color="#718096" />
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.inboxIcon} onPress={() => setShowDropdown(!showDropdown)}>
+      <TouchableOpacity style={[styles.inboxIcon, { zIndex: 100 }]} onPress={toggleDropdown}>
         <Ionicons name="mail-outline" size={30} color="#560CCE" />
         {unreadCount > 0 && (
           <View style={styles.badge}>
@@ -326,6 +365,10 @@ useFocusEffect(
           </View>
         )}
       </TouchableOpacity>
+      <TouchableOpacity style={[styles.inboxIcon, { top: 50 , left:290 , zIndex: 90 }]} onPress={togglePhoneDropdown}>
+        <Ionicons name="call-outline" size={30} color="#560CCE" />
+      </TouchableOpacity>
+
 
 {showDropdown && (
 <View style={{   position: 'absolute',
@@ -392,6 +435,59 @@ useFocusEffect(
 </View>
 
 )}
+
+
+{showPhoneDropdown && (
+  <View style={{
+    position: 'absolute',
+    top: 120,
+    right: 20,
+    width: 270,
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    elevation: 8,
+    zIndex: 1000,
+    paddingVertical: 10,
+    maxHeight: 300,
+  }}>
+    <FlatList
+      data={supportPhones}
+      keyExtractor={(item) => item.phone}
+      renderItem={({ item }) => (
+        <TouchableOpacity
+          style={{
+            flexDirection: 'row-reverse',
+            alignItems: 'center',
+            paddingHorizontal: 15,
+            paddingVertical: 12,
+            borderBottomWidth: 1,
+            borderBottomColor: '#f0f0f0',
+          }}
+          onPress={() => {
+            Linking.openURL(`tel:${item.phone}`);
+            setShowPhoneDropdown(false);
+          }}
+        >
+          <Ionicons name={item.icon} size={24} color="#560CCE" style={{ marginLeft: 10 }} />
+          <View style={{ flex: 1 }}>
+            <Text style={{ fontWeight: 'bold', fontSize: 14, color: '#333', textAlign: 'right' }}>
+              {item.name} - {item.phone}
+            </Text>
+            <Text style={{ fontSize: 13, color: '#666', textAlign: 'right' }}>
+              {item.description}
+            </Text>
+          </View>
+        </TouchableOpacity>
+      )}
+
+    />
+  </View>
+)}
+
 
 
 
