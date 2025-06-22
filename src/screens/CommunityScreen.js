@@ -349,13 +349,13 @@ const MoodFilter = () => (
                   {commentBoxVisible[post._id] && (
                     <View style={styles.commentBox}>
                       <TextInput
-                        placeholder="Write a comment..."
+                        placeholder="כתוב תגובה..."
                         value={commentTexts[post._id] || ''}
                         onChangeText={(text) => handleCommentTextChange(post._id, text)}
                         style={styles.commentInput}
                       />
                       <TouchableOpacity onPress={() => submitComment(post._id)}>
-                        <Text style={styles.postCommentButton}>Post Comment</Text>
+                        <Text style={styles.postCommentButton}>הוסף תגובה</Text>
                       </TouchableOpacity>
                     </View>
                   )}
