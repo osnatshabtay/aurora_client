@@ -147,37 +147,53 @@ const supportPhones = [
       fetchCurrentUser();
     }, []);
   
-useFocusEffect(
-  useCallback(() => {
-    const fetchUnread = async () => {
-      try {
-        const data = await api('/chat/unread');
-        const fromUsers = (data.messages || []).map(msg => msg.from);
-        const uniqueUsernames = [...new Set(fromUsers)];
+useFocusEffect(() => {
+  const fetchUnread = async () => {
+    try {
+      console.log("🔄 Fetching unread messages...");
+      const data = await api('/chat/unread');
+      console.log("📥 API response /chat/unread:", data);
 
-        const params = new URLSearchParams();
-        uniqueUsernames.forEach(username => params.append('usernames', username));
+      const fromUsers = (data.messages || []).map(msg => msg.from);
+      const uniqueUsernames = [...new Set(fromUsers)];
 
-        const res = await fetch(`${SERVER_URL}/users/multiple?${params.toString()}`);
-        const userInfos = await res.json();
-
-        const userImageMap = {};
-        userInfos.forEach(user => {
-          userImageMap[user.username] = user.selectedImage;
-        });
-
-        setUnreadCount(data.count);
-        setUnreadMessages(data.messages);
-        setSenderImages(userImageMap);
-      } catch (error) {
-        console.log('Error fetching unread:', error.message);
-        Alert.alert('Error', 'Failed to fetch unread.');
+      if (uniqueUsernames.length === 0) {
+        setUnreadCount(0);
+        setUnreadMessages([]);
+        setSenderImages({});
+        return;
       }
-    };
 
-    fetchUnread();
-  }, [])
-);
+      const params = new URLSearchParams();
+      uniqueUsernames.forEach(username => params.append('usernames', username));
+      console.log("📤 Params string:", params.toString());
+
+      const res = await fetch(`${SERVER_URL}/users/multiple?${params.toString()}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+        cache: 'no-store', 
+      });
+
+      const userInfos = await res.json();
+
+      const userImageMap = {};
+      userInfos.forEach(user => {
+        userImageMap[user.username] = user.selectedImage;
+      });
+
+      setUnreadCount(data.count);
+      setUnreadMessages(data.messages);
+      setSenderImages(userImageMap);
+    } catch (error) {
+      console.log('🚨 Error fetching unread:', error.message);
+      Alert.alert('Error', 'Failed to fetch unread.');
+    }
+  };
+  
+  fetchUnread();
+
+});
+
 
 
 
@@ -359,9 +375,9 @@ console.log('unreadMessages:', unreadMessages);
 
       <TouchableOpacity style={[styles.inboxIcon, { zIndex: 100 }]} onPress={toggleDropdown}>
         <Ionicons name="mail-outline" size={30} color="#560CCE" />
-        {unreadCount > 0 && (
+        {unreadMessages.length > 0 && (
           <View style={styles.badge}>
-            <Text style={styles.badgeText}>{unreadCount}</Text>
+            <Text style={styles.badgeText}>{unreadMessages.length}</Text>
           </View>
         )}
       </TouchableOpacity>
